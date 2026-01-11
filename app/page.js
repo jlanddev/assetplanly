@@ -173,9 +173,9 @@ export default function AdvisorSalesPage() {
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-[var(--navy)]/95 backdrop-blur-sm border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-24">
             <div className="flex items-center">
-              <Image src="/logo.png" alt="AssetPlanly" width={180} height={40} className="h-8 w-auto" />
+              <Image src="/logo.png" alt="AssetPlanly" width={300} height={80} className="h-20 w-auto" />
             </div>
             <div className="hidden md:flex items-center space-x-8">
               <a href="#how-it-works" className="text-gray-300 hover:text-white transition">How It Works</a>
@@ -190,7 +190,7 @@ export default function AdvisorSalesPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative bg-[var(--navy)] pt-32 pb-20 overflow-hidden">
+      <section className="relative bg-[var(--navy)] pt-40 pb-20 overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0" style={{
@@ -520,7 +520,7 @@ export default function AdvisorSalesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
-              <Image src="/logo.png" alt="AssetPlanly" width={150} height={35} className="h-8 w-auto mb-4" />
+              <Image src="/logo.png" alt="AssetPlanly" width={280} height={70} className="h-16 w-auto mb-4" />
               <p className="text-gray-400 text-sm">
                 Connecting qualified prospects with trusted financial advisors.
               </p>
