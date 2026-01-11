@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  /* AssetPlanly Brand Colors - matches logo background */
-  --navy: #0c1222;
-  --navy-light: #131d2e;
-  --teal: #14b8a6;
-  --teal-dark: #0d9488;
-  --gold: #c9a96e;
-  --gold-light: #d4b87a;
+  /* AssetPlanly Brand Colors - optimized for financial services conversion */
+  --navy: #0f2a3d;
+  --navy-light: #163447;
+  --green: #1e5a45;
+  --green-light: #2d6a4f;
+  --gold: #c9a227;
+  --gold-light: #d4af37;
   --white: #ffffff;
   --gray-100: #f1f5f9;
   --gray-200: #e2e8f0;
@@ -27,8 +27,8 @@
   --color-foreground: var(--foreground);
   --color-navy: var(--navy);
   --color-navy-light: var(--navy-light);
-  --color-teal: var(--teal);
-  --color-teal-dark: var(--teal-dark);
+  --color-green: var(--green);
+  --color-green-light: var(--green-light);
   --color-gold: var(--gold);
   --color-gold-light: var(--gold-light);
   --font-sans: var(--font-geist-sans);
@@ -46,24 +46,24 @@ html {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+  color: #1a1a1a;
   padding: 0.875rem 2rem;
   border-radius: 0.5rem;
   font-weight: 600;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px 0 rgba(20, 184, 166, 0.39);
+  box-shadow: 0 4px 14px 0 rgba(201, 162, 39, 0.35);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px 0 rgba(20, 184, 166, 0.5);
+  box-shadow: 0 6px 20px 0 rgba(201, 162, 39, 0.5);
 }
 
 .btn-secondary {
   background: transparent;
-  border: 2px solid var(--gold);
-  color: var(--gold);
+  border: 2px solid var(--green);
+  color: var(--green);
   padding: 0.875rem 2rem;
   border-radius: 0.5rem;
   font-weight: 600;
@@ -71,6 +71,6 @@ html {
 }
 
 .btn-secondary:hover {
-  background: var(--gold);
-  color: var(--navy);
+  background: var(--green);
+  color: white;
 }

@@ -36,7 +36,7 @@ export default function AdvisorSalesPage() {
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
               We send you leads that{" "}
-              <span className="text-[var(--teal)]">no other advisor will ever see.</span>
+              <span className="text-[var(--green)]">no other advisor will ever see.</span>
             </h1>
 
             <p className="text-xl text-gray-400 mb-8 max-w-3xl mx-auto">
@@ -72,7 +72,7 @@ export default function AdvisorSalesPage() {
                   Most lead platforms make money by selling the same lead to multiple advisors. That&apos;s the business model—volume on both sides, quality be damned. You&apos;re paying to compete, not to connect.
                 </p>
               </div>
-              <div className="bg-[var(--teal)]/10 rounded-xl p-8 border-2 border-[var(--teal)]">
+              <div className="bg-[var(--green)]/10 rounded-xl p-8 border-2 border-[var(--green)]">
                 <h3 className="text-xl font-semibold text-[var(--navy)] mb-4">Our Way</h3>
                 <p className="text-gray-600">
                   We work with a smaller group of advisors and a smaller pool of leads, and we match them intentionally. When a prospect comes in, we look at what they need and who on our roster is the best fit. Then we send them to that one advisor.
@@ -120,7 +120,7 @@ export default function AdvisorSalesPage() {
                   "By the time you pick up, the relationship has already started"
                 ].map((item, index) => (
                   <div key={index} className="flex items-center">
-                    <svg className="w-5 h-5 text-[var(--teal)] mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 text-[var(--green)] mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                     <span className="text-gray-300">{item}</span>
