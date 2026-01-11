@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  /* AssetPlanly Brand Colors - optimized for financial services conversion */
-  --navy: #0f2a3d;
-  --navy-light: #163447;
+  /* AssetPlanly Brand Colors - matches logo background */
+  --navy: #0c1222;
+  --navy-light: #131d2e;
   --green: #1e5a45;
   --green-light: #2d6a4f;
   --gold: #c9a227;
