@@ -182,10 +182,16 @@ export default function BookCallPage() {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error('Failed to submit');
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to submit');
+      }
+
       setIsSubmitted(true);
     } catch (err) {
-      setError('Something went wrong. Please try again.');
+      console.error('Booking error:', err);
+      setError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
