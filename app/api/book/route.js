@@ -4,7 +4,17 @@ import { NextResponse } from 'next/server';
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { name, email, phone, company, leadsPerMonth, preferredTime, message } = body;
+    const {
+      name,
+      email,
+      phone,
+      firmName,
+      crdNumber,
+      verified,
+      leadsPerMonth,
+      scheduledAt,
+      message
+    } = body;
 
     // Validate required fields
     if (!name || !email || !phone) {
@@ -28,11 +38,12 @@ export async function POST(request) {
           name,
           email,
           phone,
-          company,
+          company: firmName,
           leads_per_month: leadsPerMonth,
-          preferred_time: preferredTime,
+          scheduled_at: scheduledAt || null,
           message,
-          status: 'new',
+          status: scheduledAt ? 'scheduled' : 'new',
+          notes: verified ? `Verified RIA - CRD #${crdNumber}` : null,
           created_at: new Date().toISOString()
         }
       ])
