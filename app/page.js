@@ -48,7 +48,7 @@ export default function AdvisorSalesPage() {
             When someone comes through our platform looking for a wealth advisor, we match them with one person. Not five. Not whoever pays the most. One.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/book" className="btn-primary text-lg px-8 py-4 flex items-center justify-center gap-2">
               Book a Call
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,22 +58,6 @@ export default function AdvisorSalesPage() {
             <a href="#how-it-works" className="btn-secondary text-lg px-8 py-4">
               Learn More
             </a>
-          </div>
-
-          {/* Stats row */}
-          <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto pt-8 border-t border-[var(--slate-200)]">
-            <div>
-              <div className="text-3xl font-bold text-[var(--slate-900)]">100%</div>
-              <div className="text-sm text-[var(--slate-500)]">Exclusive leads</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-[var(--slate-900)]">1:1</div>
-              <div className="text-sm text-[var(--slate-500)]">Advisor matching</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-[var(--slate-900)]">24hr</div>
-              <div className="text-sm text-[var(--slate-500)]">Average delivery</div>
-            </div>
           </div>
         </div>
       </section>
