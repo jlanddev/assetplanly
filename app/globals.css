@@ -1,21 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  --slate-900: #0f172a;
-  --slate-800: #1e293b;
-  --slate-700: #334155;
-  --slate-600: #475569;
-  --slate-400: #94a3b8;
-  --slate-200: #e2e8f0;
-  --slate-100: #f1f5f9;
-  --slate-50: #f8fafc;
+  /* Clean whites and grays */
+  --white: #ffffff;
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
 
-  --emerald-600: #059669;
-  --emerald-500: #10b981;
-  --emerald-400: #34d399;
+  /* Primary - Navy blue (from mascot suit) */
+  --blue-50: #f0f5ff;
+  --blue-100: #e0ebff;
+  --blue-500: #3b5998;
+  --blue-600: #2c4a7c;
+  --blue-700: #1e3a5f;
 
-  --amber-500: #f59e0b;
-  --amber-400: #fbbf24;
+  /* Accent - Teal/Cyan (from mascot icons) */
+  --green-50: #f0fdfa;
+  --green-100: #ccfbf1;
+  --green-500: #14b8a6;
+  --green-600: #0d9488;
 }
 
 @theme inline {
@@ -28,36 +38,42 @@ html {
 }
 
 body {
-  background: white;
-  color: var(--slate-900);
+  background: var(--white);
+  color: var(--gray-700);
   font-family: var(--font-sans), system-ui, sans-serif;
+  line-height: 1.7;
+}
+
+h1, h2, h3, h4 {
+  color: var(--gray-900);
 }
 
 .btn-primary {
-  background: var(--emerald-600);
+  background: var(--blue-600);
   color: white;
-  padding: 0.875rem 2rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  transition: all 0.2s ease;
+  padding: 0.875rem 1.75rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.15s ease;
 }
 
 .btn-primary:hover {
-  background: var(--emerald-500);
-  transform: translateY(-1px);
+  background: var(--blue-700);
 }
 
 .btn-secondary {
-  background: white;
-  border: 2px solid var(--slate-200);
-  color: var(--slate-700);
-  padding: 0.875rem 2rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  transition: all 0.2s ease;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  color: var(--gray-700);
+  padding: 0.875rem 1.75rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.15s ease;
 }
 
 .btn-secondary:hover {
-  border-color: var(--slate-300);
-  background: var(--slate-50);
+  background: var(--gray-50);
+  border-color: var(--gray-300);
 }
