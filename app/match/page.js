@@ -11,6 +11,12 @@ function MatchFlow() {
   const [matchedAdvisor, setMatchedAdvisor] = useState(null);
   const [isMatching, setIsMatching] = useState(false);
   const [error, setError] = useState('');
+  const [brandingAdvisor, setBrandingAdvisor] = useState(null);
+
+  useEffect(() => {
+    fetch('/api/match', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+      .then(r => r.json()).then(d => d.advisor && setBrandingAdvisor(d.advisor)).catch(() => {});
+  }, []);
 
   const [formData, setFormData] = useState({
     // Quiz answers
@@ -112,8 +118,9 @@ function MatchFlow() {
     }
   };
 
-  const primaryColor = matchedAdvisor?.primary_color || '#1e3a5f';
-  const secondaryColor = matchedAdvisor?.secondary_color || '#22c55e';
+  const displayAdvisor = matchedAdvisor || brandingAdvisor;
+  const primaryColor = displayAdvisor?.primary_color || '#1e3a5f';
+  const secondaryColor = displayAdvisor?.secondary_color || '#22c55e';
 
   // Success screen
   if (isSubmitted) {
@@ -174,7 +181,11 @@ function MatchFlow() {
       <nav className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Link href="/find-advisor">
-            <Image src="/logo.png" alt="AssetPlanly" width={150} height={36} className="h-8 w-auto" />
+            {displayAdvisor?.logo_url ? (
+              <img src={displayAdvisor.logo_url} alt={displayAdvisor.firm_name || ''} className="h-8 w-auto" />
+            ) : (
+              <Image src="/logo.png" alt="AssetPlanly" width={150} height={36} className="h-8 w-auto" />
+            )}
           </Link>
           <div className="text-sm text-gray-500">
             Step {currentStep} of {totalSteps}
@@ -187,8 +198,8 @@ function MatchFlow() {
         <div className="max-w-4xl mx-auto">
           <div className="h-1 bg-gray-200">
             <div
-              className="h-1 bg-green-500 transition-all duration-500"
-              style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+              className="h-1 transition-all duration-500"
+              style={{ width: `${(currentStep / totalSteps) * 100}%`, backgroundColor: primaryColor }}
             />
           </div>
         </div>
@@ -220,7 +231,7 @@ function MatchFlow() {
                     onClick={() => handleSelect('income', opt.value)}
                     className={`p-6 rounded-xl border-2 transition-all hover:border-blue-500 hover:shadow-md ${
                       formData.income === opt.value
-                        ? 'border-blue-500 bg-blue-50'
+                        ? 'border-current bg-opacity-10'
                         : 'border-gray-200 bg-white'
                     }`}
                   >
@@ -252,7 +263,7 @@ function MatchFlow() {
                     onClick={() => handleSelect('retireTimeline', opt.value)}
                     className={`p-6 rounded-xl border-2 transition-all hover:border-blue-500 hover:shadow-md ${
                       formData.retireTimeline === opt.value
-                        ? 'border-blue-500 bg-blue-50'
+                        ? 'border-current bg-opacity-10'
                         : 'border-gray-200 bg-white'
                     }`}
                   >
@@ -285,7 +296,7 @@ function MatchFlow() {
                     onClick={() => handleSelect('ownsHome', opt.value)}
                     className={`p-8 rounded-xl border-2 transition-all hover:border-blue-500 hover:shadow-md ${
                       formData.ownsHome === opt.value
-                        ? 'border-blue-500 bg-blue-50'
+                        ? 'border-current bg-opacity-10'
                         : 'border-gray-200 bg-white'
                     }`}
                   >
@@ -318,7 +329,7 @@ function MatchFlow() {
                     onClick={() => handleSelect('ownsBusiness', opt.value)}
                     className={`p-8 rounded-xl border-2 transition-all hover:border-blue-500 hover:shadow-md ${
                       formData.ownsBusiness === opt.value
-                        ? 'border-blue-500 bg-blue-50'
+                        ? 'border-current bg-opacity-10'
                         : 'border-gray-200 bg-white'
                     }`}
                   >
@@ -355,7 +366,7 @@ function MatchFlow() {
                     onClick={() => handleSelect('portfolioSize', opt.value)}
                     className={`p-6 rounded-xl border-2 transition-all hover:border-blue-500 hover:shadow-md ${
                       formData.portfolioSize === opt.value
-                        ? 'border-blue-500 bg-blue-50'
+                        ? 'border-current bg-opacity-10'
                         : 'border-gray-200 bg-white'
                     }`}
                   >
@@ -389,7 +400,7 @@ function MatchFlow() {
                     onClick={() => handleSelect('hasAdvisor', opt.value)}
                     className={`p-8 rounded-xl border-2 transition-all hover:border-blue-500 hover:shadow-md ${
                       formData.hasAdvisor === opt.value
-                        ? 'border-blue-500 bg-blue-50'
+                        ? 'border-current bg-opacity-10'
                         : 'border-gray-200 bg-white'
                     }`}
                   >
@@ -425,7 +436,7 @@ function MatchFlow() {
                     onClick={() => handleSelect('localPreference', opt.value)}
                     className={`p-6 rounded-xl border-2 transition-all hover:border-blue-500 hover:shadow-md text-left ${
                       formData.localPreference === opt.value
-                        ? 'border-blue-500 bg-blue-50'
+                        ? 'border-current bg-opacity-10'
                         : 'border-gray-200 bg-white'
                     }`}
                   >
