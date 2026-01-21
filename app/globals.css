@@ -44,9 +44,7 @@ body {
   line-height: 1.7;
 }
 
-h1, h2, h3, h4 {
-  color: var(--gray-900);
-}
+/* Only apply dark headings on light backgrounds - removed to allow Tailwind control */
 
 .btn-primary {
   background: var(--blue-600);
