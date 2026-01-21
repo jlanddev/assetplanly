@@ -451,10 +451,10 @@ function MatchFlow() {
                   </svg>
                 </div>
                 <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-                  Great! Let&apos;s get you matched.
+                  Schedule Your Complimentary Review
                 </h2>
                 <p className="text-gray-500 max-w-md mx-auto">
-                  Enter your info below and we&apos;ll connect you with a vetted financial advisor who matches your needs.
+                  Enter your info below to schedule your free consultation with a vetted financial advisor.
                 </p>
               </div>
 
@@ -527,7 +527,7 @@ function MatchFlow() {
                     disabled={!formData.firstName || !formData.lastName || !formData.email || !formData.phone || isMatching}
                     className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-4 rounded-lg font-semibold text-lg transition-colors mt-4"
                   >
-                    {isMatching ? 'Finding your match...' : 'Find My Advisor →'}
+                    {isMatching ? 'Scheduling...' : 'Schedule My Free Review →'}
                   </button>
                 </div>
 
@@ -549,10 +549,10 @@ function MatchFlow() {
                 <>
                   <div className="text-center mb-8">
                     <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-                      We found your match!
+                      Your Complimentary Review
                     </h2>
                     <p className="text-gray-500">
-                      Based on your answers, we&apos;ve matched you with:
+                      You&apos;ve been connected with:
                     </p>
                   </div>
 
