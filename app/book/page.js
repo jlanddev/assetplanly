@@ -1,9 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from "next/link";
+import Image from "next/image";
 
-export default function BookCallPage() {
+function BookCallForm() {
+  const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -16,6 +19,22 @@ export default function BookCallPage() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [availableSlots, setAvailableSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
+
+  // UTM params for tracking
+  const [utmParams, setUtmParams] = useState({
+    utmSource: '',
+    utmMedium: '',
+    utmCampaign: ''
+  });
+
+  // Capture UTM params on mount
+  useEffect(() => {
+    setUtmParams({
+      utmSource: searchParams.get('utm_source') || '',
+      utmMedium: searchParams.get('utm_medium') || '',
+      utmCampaign: searchParams.get('utm_campaign') || ''
+    });
+  }, [searchParams]);
 
   const [formData, setFormData] = useState({
     lastName: '',
@@ -179,13 +198,24 @@ export default function BookCallPage() {
       const response = await fetch('/api/book', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          ...utmParams
+        }),
       });
 
       const result = await response.json();
 
       if (!response.ok) {
         throw new Error(result.error || 'Failed to submit');
+      }
+
+      // Fire Facebook Lead event
+      if (typeof window !== 'undefined' && window.fbq) {
+        window.fbq('track', 'Lead', {
+          content_name: 'Advisor Booking',
+          content_category: 'Financial Advisor'
+        });
       }
 
       setIsSubmitted(true);
@@ -203,8 +233,8 @@ export default function BookCallPage() {
         <nav className="bg-white border-b border-[var(--gray-200)]">
           <div className="max-w-5xl mx-auto px-6">
             <div className="flex justify-between items-center h-16">
-              <Link href="/" className="text-xl font-semibold text-[var(--gray-900)]">
-                AssetPlanly
+              <Link href="/">
+                <Image src="/logo.png" alt="AssetPlanly" width={160} height={36} className="h-9 w-auto" />
               </Link>
             </div>
           </div>
@@ -243,8 +273,8 @@ export default function BookCallPage() {
       <nav className="bg-white border-b border-[var(--gray-200)]">
         <div className="max-w-5xl mx-auto px-6">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="text-xl font-semibold text-[var(--gray-900)]">
-              AssetPlanly
+            <Link href="/">
+              <Image src="/logo.png" alt="AssetPlanly" width={160} height={36} className="h-9 w-auto" />
             </Link>
           </div>
         </div>
@@ -650,5 +680,17 @@ export default function BookCallPage() {
         }
       `}</style>
     </div>
+  );
+}
+
+export default function BookCallPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-b from-[var(--blue-50)] to-white flex items-center justify-center">
+        <div className="text-[var(--gray-500)]">Loading...</div>
+      </div>
+    }>
+      <BookCallForm />
+    </Suspense>
   );
 }
