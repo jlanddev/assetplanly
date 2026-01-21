@@ -89,18 +89,32 @@ export async function POST(request) {
     console.log('Received booking data:', JSON.stringify(body, null, 2));
 
     const {
+      // Basic info
       name,
       email,
       phone,
+      zipCode,
+      // Advisor flow fields
       firmName,
       crdNumber,
       verified,
       leadsPerMonth,
       scheduledAt,
       message,
+      // Consumer match flow fields
+      income,
+      retireTimeline,
+      ownsHome,
+      ownsBusiness,
+      portfolioSize,
+      hasAdvisor,
+      localPreference,
+      matchedAdvisorId,
+      // Tracking
       utmSource,
       utmMedium,
-      utmCampaign
+      utmCampaign,
+      source: providedSource
     } = body;
 
     // Validate required fields
@@ -120,8 +134,20 @@ export async function POST(request) {
       process.env.SUPABASE_SERVICE_ROLE_KEY
     );
 
-    // Determine lead source from UTM params
-    const source = determineSource(utmSource, utmMedium);
+    // Determine lead source
+    const source = providedSource || determineSource(utmSource, utmMedium);
+
+    // Build notes from consumer flow data
+    let notesArray = [];
+    if (verified && crdNumber) notesArray.push(`Verified RIA - CRD #${crdNumber}`);
+    if (income) notesArray.push(`Income: ${income}`);
+    if (retireTimeline) notesArray.push(`Retire timeline: ${retireTimeline}`);
+    if (ownsHome) notesArray.push(`Owns home: ${ownsHome}`);
+    if (ownsBusiness) notesArray.push(`Owns business: ${ownsBusiness}`);
+    if (portfolioSize) notesArray.push(`Portfolio: ${portfolioSize}`);
+    if (hasAdvisor) notesArray.push(`Has advisor: ${hasAdvisor}`);
+    if (localPreference) notesArray.push(`Local pref: ${localPreference}`);
+    if (zipCode) notesArray.push(`ZIP: ${zipCode}`);
 
     // Build insert data
     const insertData = {
@@ -133,11 +159,13 @@ export async function POST(request) {
       scheduled_at: scheduledAt || null,
       message: message || null,
       status: scheduledAt ? 'scheduled' : 'new',
-      notes: verified && crdNumber ? `Verified RIA - CRD #${crdNumber}` : null,
+      notes: notesArray.length > 0 ? notesArray.join(' | ') : null,
       source,
       utm_source: utmSource || null,
       utm_medium: utmMedium || null,
-      utm_campaign: utmCampaign || null
+      utm_campaign: utmCampaign || null,
+      // If matched to a specific advisor, assign directly
+      assigned_advisor_id: matchedAdvisorId || null
     };
 
     console.log('Inserting data:', JSON.stringify(insertData, null, 2));
@@ -158,9 +186,26 @@ export async function POST(request) {
 
     console.log('Insert successful:', data);
 
-    // Auto-assign to next advisor via round-robin
-    if (data && data[0]) {
+    // If no matched advisor, use round-robin assignment
+    if (data && data[0] && !matchedAdvisorId) {
       await assignToNextAdvisor(supabase, data[0].id);
+    } else if (matchedAdvisorId) {
+      // Increment lead count for matched advisor
+      const { data: advisor } = await supabase
+        .from('advisors')
+        .select('leads_assigned_count')
+        .eq('id', matchedAdvisorId)
+        .single();
+
+      if (advisor) {
+        await supabase
+          .from('advisors')
+          .update({
+            leads_assigned_count: (advisor.leads_assigned_count || 0) + 1,
+            last_assigned_at: new Date().toISOString()
+          })
+          .eq('id', matchedAdvisorId);
+      }
     }
 
     return NextResponse.json({ success: true, data });
