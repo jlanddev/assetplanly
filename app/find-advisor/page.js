@@ -28,166 +28,111 @@ export default function FindAdvisorPage() {
       </nav>
 
       {/* Hero */}
-      <section className="pt-16 pb-20 px-6">
+      <section className="pt-12 pb-16 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <p className="text-[#1e3a5f] font-semibold mb-6 tracking-wide uppercase text-sm">Concierge Fiduciary Service</p>
-              <h1 className="text-4xl md:text-5xl lg:text-[52px] font-bold text-slate-900 leading-[1.15] mb-6">
-                Meet the right{' '}
-                <span className="text-[#1e3a5f]">fiduciary advisor</span>{' '}
-                for your goals
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="max-w-xl">
+              <h1 className="text-4xl md:text-5xl font-bold text-slate-900 leading-[1.1] mb-6">
+                You're in the right place for{' '}
+                <span className="text-[#1e3a5f]">expert financial advice</span>
               </h1>
-              <p className="text-xl text-slate-600 mb-8 leading-relaxed">
-                We introduce you to a highly qualified fiduciary who specializes in your specific situation. Schedule a complimentary consultation to get started.
+              <p className="text-lg text-slate-600 mb-8">
+                Getting started is easy and complimentary.
               </p>
 
-              <Link href="/plan" className="inline-flex items-center gap-3 bg-[#e5b94e] text-slate-900 px-8 py-4 rounded-lg font-bold text-lg hover:bg-[#d4a93d] transition-all shadow-md hover:shadow-lg">
-                Find My Advisor
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
+              <Link href="/plan" className="inline-block bg-[#e5b94e] text-slate-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#d4a93d] transition-all">
+                Get matched with an advisor
               </Link>
-
-              {/* Simple trust line */}
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-10 text-sm text-slate-500">
-                <span className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#1e3a5f]"></span>
-                  Fiduciary advisors only
-                </span>
-                <span className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#1e3a5f]"></span>
-                  SEC registered
-                </span>
-                <span className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#1e3a5f]"></span>
-                  No obligation
-                </span>
-              </div>
             </div>
 
-            {/* Hero image/card */}
-            <div className="relative">
-              <div className="absolute -inset-4 bg-gradient-to-r from-[#1e3a5f]/10 to-[#e5b94e]/10 rounded-3xl blur-2xl" />
-              <div className="relative bg-white rounded-2xl shadow-xl p-8 border border-slate-100">
-                <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
-                  <div className="w-14 h-14 bg-[#1e3a5f] rounded-xl flex items-center justify-center">
-                    <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-slate-900 text-lg">Complimentary Consultation</h3>
-                    <p className="text-slate-500 text-sm">With the right advisor for you</p>
-                  </div>
+            {/* Circular hero image */}
+            <div className="flex justify-center lg:justify-end">
+              <div className="relative">
+                <div className="w-72 h-72 md:w-96 md:h-96 rounded-full overflow-hidden bg-slate-100">
+                  <img
+                    src="https://images.unsplash.com/photo-1556745753-b2904692b3cd?w=800&h=800&fit=crop&crop=faces"
+                    alt="Happy couple planning their financial future"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-
-                <div className="space-y-3 mb-8">
-                  <div className="flex items-center gap-3 text-slate-600">
-                    <span className="text-[#1e3a5f] font-medium">→</span>
-                    <span>Introduction to a qualified fiduciary</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-slate-600">
-                    <span className="text-[#1e3a5f] font-medium">→</span>
-                    <span>Advisor matched to your situation</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-slate-600">
-                    <span className="text-[#1e3a5f] font-medium">→</span>
-                    <span>Complimentary planning meeting</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-slate-600">
-                    <span className="text-[#1e3a5f] font-medium">→</span>
-                    <span>No obligation to proceed</span>
-                  </div>
-                </div>
-
-                <Link href="/plan" className="block w-full bg-[#1e3a5f] text-white py-4 rounded-xl font-semibold text-center hover:bg-[#2d4a6f] transition-all">
-                  Get Started
-                </Link>
-                <p className="text-center text-sm text-slate-400 mt-4">Takes less than 2 minutes</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Social proof - media logos */}
-      <section className="py-12 px-6 bg-white border-y border-slate-100">
+      {/* As featured in */}
+      <section className="py-8 px-6 border-t border-slate-200">
         <div className="max-w-5xl mx-auto">
-          <p className="text-center text-sm text-slate-400 uppercase tracking-wider mb-8">As featured in</p>
-          <div className="flex flex-wrap items-center justify-center gap-12 opacity-40 grayscale">
-            <svg className="h-6" viewBox="0 0 100 24" fill="currentColor">
-              <text x="0" y="18" className="text-lg font-bold">Forbes</text>
-            </svg>
-            <svg className="h-6" viewBox="0 0 120 24" fill="currentColor">
-              <text x="0" y="18" className="text-lg font-bold">MarketWatch</text>
-            </svg>
-            <svg className="h-6" viewBox="0 0 100 24" fill="currentColor">
-              <text x="0" y="18" className="text-lg font-bold">Kiplinger</text>
-            </svg>
-            <svg className="h-6" viewBox="0 0 100 24" fill="currentColor">
-              <text x="0" y="18" className="text-lg font-bold">Yahoo!</text>
-            </svg>
+          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-4">
+            <span className="text-xs text-slate-400 uppercase tracking-wider">As featured in</span>
+            <span className="text-slate-400 font-serif text-xl italic">yahoo!<span className="text-xs not-italic">finance</span></span>
+            <span className="text-slate-400 font-serif text-xl">Kiplinger</span>
+            <span className="text-slate-400 font-serif text-xl italic">MarketWatch</span>
+            <span className="text-slate-400 text-sm font-semibold tracking-tight">GOOD<br/><span className="font-normal">HOUSEKEEPING</span></span>
           </div>
         </div>
       </section>
 
-      {/* How It Works */}
-      <section id="how-it-works" className="py-24 px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="text-[#1e3a5f] font-semibold mb-3 tracking-wide uppercase text-sm">Simple Process</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">How It Works</h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Three simple steps to meeting the right advisor
-            </p>
-          </div>
+      {/* How It Works - Split layout */}
+      <section id="how-it-works" className="grid lg:grid-cols-2">
+        {/* Image side */}
+        <div className="bg-[#b8e0e0] min-h-[500px] lg:min-h-[600px] flex items-end justify-center">
+          <img
+            src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=600&h=800&fit=crop&crop=top"
+            alt="Woman planning finances"
+            className="w-full max-w-md object-cover object-top"
+          />
+        </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 relative">
-              <div className="absolute -top-4 left-8 w-8 h-8 bg-[#e5b94e] rounded-lg flex items-center justify-center text-slate-900 font-bold shadow-md">
-                1
+        {/* Content side */}
+        <div className="bg-[#f5f3ef] px-8 lg:px-16 py-16 flex items-center">
+          <div className="max-w-md">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-10">How it works</h2>
+
+            <div className="space-y-8">
+              <div className="flex gap-5">
+                <div className="w-10 h-10 rounded-full bg-[#1e3a5f] text-white flex items-center justify-center font-semibold shrink-0">
+                  1
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 mb-2">Answer a few questions</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">
+                    Share some details about your financial situation. It only takes a few minutes. Your information is confidential and stored securely.
+                  </p>
+                </div>
               </div>
-              <div className="pt-4">
-                <h3 className="text-xl font-bold text-slate-900 mb-3">Share Your Goals</h3>
-                <p className="text-slate-600 leading-relaxed">
-                  Answer a few questions about your financial situation and what you want to achieve.
-                </p>
+
+              <div className="flex gap-5">
+                <div className="w-10 h-10 rounded-full bg-[#1e3a5f] text-white flex items-center justify-center font-semibold shrink-0">
+                  2
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 mb-2">Meet your advisor</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">
+                    We'll introduce you to a regulated fiduciary advisor based solely on your goals and needs.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-5">
+                <div className="w-10 h-10 rounded-full bg-[#1e3a5f] text-white flex items-center justify-center font-semibold shrink-0">
+                  3
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 mb-2">Book your consultation</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">
+                    Arrange your first meeting at a time that suits you. Discover your financial opportunities, with no obligation to continue.
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 relative">
-              <div className="absolute -top-4 left-8 w-8 h-8 bg-[#e5b94e] rounded-lg flex items-center justify-center text-slate-900 font-bold shadow-md">
-                2
-              </div>
-              <div className="pt-4">
-                <h3 className="text-xl font-bold text-slate-900 mb-3">Meet Your Advisor</h3>
-                <p className="text-slate-600 leading-relaxed">
-                  We introduce you to a fiduciary advisor who specializes in your specific needs.
-                </p>
-              </div>
+            <div className="mt-10">
+              <Link href="/plan" className="inline-block bg-[#e5b94e] text-slate-900 px-8 py-4 rounded-lg font-semibold hover:bg-[#d4a93d] transition-all">
+                Match with an advisor
+              </Link>
             </div>
-
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 relative">
-              <div className="absolute -top-4 left-8 w-8 h-8 bg-[#e5b94e] rounded-lg flex items-center justify-center text-slate-900 font-bold shadow-md">
-                3
-              </div>
-              <div className="pt-4">
-                <h3 className="text-xl font-bold text-slate-900 mb-3">Schedule Your Meeting</h3>
-                <p className="text-slate-600 leading-relaxed">
-                  Book a complimentary consultation to discuss your goals — no obligation to proceed.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-center mt-14">
-            <Link href="/plan" className="inline-flex items-center gap-3 bg-[#e5b94e] text-slate-900 px-8 py-4 rounded-lg font-bold text-lg hover:bg-[#d4a93d] transition-all shadow-md">
-              Get Started Now
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
           </div>
         </div>
       </section>
