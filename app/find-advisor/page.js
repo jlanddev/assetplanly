@@ -41,7 +41,7 @@ export default function FindAdvisorPage() {
               </p>
 
               <Link href="/plan" className="inline-block bg-[#e5b94e] text-slate-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#d4a93d] transition-all">
-                Get matched with an advisor
+                Find my advisor
               </Link>
             </div>
 
@@ -130,7 +130,7 @@ export default function FindAdvisorPage() {
 
             <div className="mt-10">
               <Link href="/plan" className="inline-block bg-[#e5b94e] text-slate-900 px-8 py-4 rounded-lg font-semibold hover:bg-[#d4a93d] transition-all">
-                Match with an advisor
+                Find my advisor
               </Link>
             </div>
           </div>
@@ -191,9 +191,9 @@ export default function FindAdvisorPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Personalized Match</h3>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">Right Fit For You</h3>
               <p className="text-slate-600 leading-relaxed">
-                We match you with the advisor best suited to your specific situation, goals, and preferences.
+                We introduce you to the advisor best suited to your specific situation, goals, and preferences.
               </p>
             </div>
           </div>
