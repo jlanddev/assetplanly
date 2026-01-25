@@ -2,10 +2,26 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import Script from "next/script";
 
 export default function FindAdvisorPage() {
   return (
-    <div className="min-h-screen bg-[#faf9f7]">
+    <>
+      {/* Google tag (gtag.js) */}
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=AW-17733369236"
+        strategy="afterInteractive"
+      />
+      <Script id="google-ads" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'AW-17733369236');
+        `}
+      </Script>
+
+      <div className="min-h-screen bg-[#faf9f7]">
       {/* Navigation */}
       <nav className="bg-white border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-6">
@@ -279,5 +295,6 @@ export default function FindAdvisorPage() {
         </div>
       </footer>
     </div>
+    </>
   );
 }
