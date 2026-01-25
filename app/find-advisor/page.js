@@ -19,11 +19,11 @@ export default function FindAdvisorPage() {
             <div className="hidden md:flex items-center gap-8">
               <a href="#how-it-works" className="text-gray-600 hover:text-[#1e3a5f] font-medium">How It Works</a>
               <a href="#why-us" className="text-gray-600 hover:text-[#1e3a5f] font-medium">Why AssetPlanly</a>
-              <Link href="/match" className="bg-[#1e3a5f] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#2d4a6f] transition-all">
+              <Link href="/plan" className="bg-[#1e3a5f] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#2d4a6f] transition-all">
                 Find My Advisor
               </Link>
             </div>
-            <Link href="/match" className="md:hidden bg-[#1e3a5f] text-white px-5 py-2.5 rounded-full font-semibold text-sm">
+            <Link href="/plan" className="md:hidden bg-[#1e3a5f] text-white px-5 py-2.5 rounded-full font-semibold text-sm">
               Get Started
             </Link>
           </div>
@@ -48,7 +48,7 @@ export default function FindAdvisorPage() {
                 Answer a few questions and get matched with a vetted, licensed advisor who specializes in your situation. It takes less than 2 minutes.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Link href="/match" className="bg-[#1e3a5f] text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-[#2d4a6f] transition-all inline-flex items-center justify-center gap-2 shadow-lg shadow-blue-900/20">
+                <Link href="/plan" className="bg-[#1e3a5f] text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-[#2d4a6f] transition-all inline-flex items-center justify-center gap-2 shadow-lg shadow-blue-900/20">
                   Get Matched Free
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -91,7 +91,7 @@ export default function FindAdvisorPage() {
                   <h3 className="font-bold text-gray-900 text-lg">Get Your Match</h3>
                   <p className="text-gray-500 text-sm mt-1">Takes less than 2 minutes</p>
                 </div>
-                <Link href="/match" className="block w-full bg-[#1e3a5f] text-white py-4 rounded-xl font-semibold text-center hover:bg-[#2d4a6f] transition-all">
+                <Link href="/plan" className="block w-full bg-[#1e3a5f] text-white py-4 rounded-xl font-semibold text-center hover:bg-[#2d4a6f] transition-all">
                   Start Now
                 </Link>
               </div>
@@ -190,7 +190,7 @@ export default function FindAdvisorPage() {
           </div>
 
           <div className="text-center mt-12">
-            <Link href="/match" className="inline-flex items-center gap-2 bg-[#1e3a5f] text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-[#2d4a6f] transition-all">
+            <Link href="/plan" className="inline-flex items-center gap-2 bg-[#1e3a5f] text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-[#2d4a6f] transition-all">
               Get Started Now
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -349,7 +349,7 @@ export default function FindAdvisorPage() {
           <p className="text-xl text-gray-600 mb-10">
             It only takes 2 minutes. Get matched with a vetted financial advisor who specializes in your needs.
           </p>
-          <Link href="/match" className="inline-flex items-center gap-2 bg-[#1e3a5f] text-white px-10 py-5 rounded-full font-bold text-lg hover:bg-[#2d4a6f] transition-all shadow-lg shadow-blue-900/20">
+          <Link href="/plan" className="inline-flex items-center gap-2 bg-[#1e3a5f] text-white px-10 py-5 rounded-full font-bold text-lg hover:bg-[#2d4a6f] transition-all shadow-lg shadow-blue-900/20">
             Get Matched Free
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
