@@ -106,12 +106,15 @@ export default function FindAdvisorPage() {
       {/* How It Works - Split layout */}
       <section id="how-it-works" className="grid lg:grid-cols-2">
         {/* Image side */}
-        <div className="bg-[#b8e0e0] min-h-[500px] lg:min-h-[600px] flex items-end justify-center overflow-hidden">
-          <img
-            src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=800&fit=crop&crop=faces"
-            alt="Mature couple reviewing financial plans"
-            className="w-full max-w-md object-cover object-top"
-          />
+        <div className="bg-[#f5f3ef] min-h-[500px] lg:min-h-[600px] flex items-center justify-center p-12">
+          {/* Navy rectangular frame */}
+          <div className="border-4 border-[#1e3a5f] p-6 bg-white">
+            <img
+              src="/advisor-meeting.png"
+              alt="Couple meeting with financial advisor"
+              className="w-full max-w-sm object-contain"
+            />
+          </div>
         </div>
 
         {/* Content side */}
