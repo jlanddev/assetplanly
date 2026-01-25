@@ -46,47 +46,38 @@ export default function FindAdvisorPage() {
               </Link>
             </div>
 
-            {/* Couple line drawing - faded on all sides */}
-            <div
-              className="absolute right-8 lg:right-16 top-1/2 -translate-y-1/2 w-[45%] h-[80%] hidden lg:block pointer-events-none"
-              style={{
-                maskImage: 'radial-gradient(ellipse 70% 70% at center, black 30%, transparent 70%)',
-                WebkitMaskImage: 'radial-gradient(ellipse 70% 70% at center, black 30%, transparent 70%)',
-              }}
-            >
+            {/* Couple line drawing - large, fading on edges */}
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[55%] hidden lg:flex items-center justify-end pointer-events-none">
               <img
                 src="/couple-line-drawing.png"
                 alt="Couple reviewing financial plans"
-                className="h-full w-full object-contain"
+                className="w-full max-w-lg opacity-90"
+                style={{
+                  maskImage: 'linear-gradient(to left, black 60%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to left, black 60%, transparent 100%)',
+                }}
               />
             </div>
           </div>
         </div>
 
-        {/* Paper airplane flying down to next section - flipped upside down */}
-        <div className="absolute right-20 bottom-0 translate-y-1/2 hidden lg:block z-20">
+        {/* Paper airplane flying down - positioned at bottom right of hero */}
+        <div className="absolute right-32 -bottom-16 hidden lg:block z-20">
           <img
             src="/paper-airplane.png"
             alt=""
-            className="w-32 h-auto"
-            style={{ transform: 'rotate(180deg)' }}
+            className="w-48"
+            style={{ transform: 'scaleY(-1)' }}
           />
         </div>
 
         {/* Mobile illustration */}
         <div className="lg:hidden flex justify-center pb-8">
-          <div
-            style={{
-              maskImage: 'radial-gradient(ellipse 80% 80% at center, black 40%, transparent 70%)',
-              WebkitMaskImage: 'radial-gradient(ellipse 80% 80% at center, black 40%, transparent 70%)',
-            }}
-          >
-            <img
-              src="/couple-line-drawing.png"
-              alt="Couple reviewing financial plans"
-              className="h-52 object-contain"
-            />
-          </div>
+          <img
+            src="/couple-line-drawing.png"
+            alt="Couple reviewing financial plans"
+            className="h-64 object-contain opacity-80"
+          />
         </div>
       </section>
 
