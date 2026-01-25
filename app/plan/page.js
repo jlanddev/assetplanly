@@ -2,22 +2,30 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import Link from "next/link";
+import Image from "next/image";
 
-function MatchFlow() {
+function PlanFlow() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [advisor, setAdvisor] = useState(null);
   const [error, setError] = useState('');
+  const [showAdvisorReveal, setShowAdvisorReveal] = useState(false);
 
   const [formData, setFormData] = useState({
-    income: '',
-    retireTimeline: '',
-    ownsHome: '',
-    ownsBusiness: '',
     portfolioSize: '',
+    retireTimeline: '',
+    income: '',
     hasAdvisor: '',
-    localPreference: '',
+    ownsHome: '',
+    primaryGoal: '',
+    // Phase 2 questions (after advisor reveal)
+    pastExperience: '',
+    riskTolerance: '',
+    meetingPreference: '',
+    urgency: '',
+    concerns: '',
+    // Contact
     firstName: '',
     lastName: '',
     email: '',
@@ -25,7 +33,7 @@ function MatchFlow() {
     zipCode: ''
   });
 
-  // Pre-load advisor branding
+  // Pre-load advisor
   useEffect(() => {
     fetch('/api/match', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
       .then(r => r.json()).then(d => d.advisor && setAdvisor(d.advisor)).catch(() => {});
@@ -36,7 +44,13 @@ function MatchFlow() {
 
   const handleSelect = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    setTimeout(() => setCurrentStep(prev => prev + 1), 250);
+
+    // After question 6, show advisor reveal
+    if (currentStep === 6) {
+      setTimeout(() => setShowAdvisorReveal(true), 300);
+    } else {
+      setTimeout(() => setCurrentStep(prev => prev + 1), 250);
+    }
   };
 
   const handleChange = (e) => {
@@ -49,6 +63,11 @@ function MatchFlow() {
     if (phone.length < 4) return phone;
     if (phone.length < 7) return `(${phone.slice(0, 3)}) ${phone.slice(3)}`;
     return `(${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 10)}`;
+  };
+
+  const continueAfterReveal = () => {
+    setShowAdvisorReveal(false);
+    setCurrentStep(7);
   };
 
   const handleSubmit = async (e) => {
@@ -68,10 +87,8 @@ function MatchFlow() {
           income: formData.income,
           retireTimeline: formData.retireTimeline,
           ownsHome: formData.ownsHome,
-          ownsBusiness: formData.ownsBusiness,
           portfolioSize: formData.portfolioSize,
           hasAdvisor: formData.hasAdvisor,
-          localPreference: formData.localPreference,
           matchedAdvisorId: advisor?.id,
           source: 'concierge'
         }),
@@ -87,6 +104,215 @@ function MatchFlow() {
     }
   };
 
+  // Phase 1 questions (AssetPlanly branding)
+  const phase1Questions = [
+    {
+      key: 'portfolioSize',
+      title: 'What are your total investable assets?',
+      subtitle: 'Include retirement accounts, savings, and investments',
+      options: [
+        { value: 'under-100k', label: 'Under $100K' },
+        { value: '100k-250k', label: '$100K - $250K' },
+        { value: '250k-500k', label: '$250K - $500K' },
+        { value: '500k-1m', label: '$500K - $1M' },
+        { value: '1m-5m', label: '$1M - $5M' },
+        { value: '5m+', label: '$5M+' },
+      ]
+    },
+    {
+      key: 'retireTimeline',
+      title: 'When do you plan to retire?',
+      options: [
+        { value: '1-5', label: 'Within 5 years' },
+        { value: '5-10', label: '5-10 years' },
+        { value: '10+', label: '10+ years' },
+        { value: 'retired', label: 'Already retired' },
+      ]
+    },
+    {
+      key: 'income',
+      title: 'What is your household income?',
+      subtitle: 'Annual pre-tax income',
+      options: [
+        { value: 'under-75k', label: 'Under $75K' },
+        { value: '75k-150k', label: '$75K - $150K' },
+        { value: '150k-250k', label: '$150K - $250K' },
+        { value: '250k+', label: '$250K+' },
+      ]
+    },
+    {
+      key: 'hasAdvisor',
+      title: 'Do you currently work with a financial advisor?',
+      options: [
+        { value: 'yes', label: 'Yes, I have an advisor' },
+        { value: 'no', label: 'No, not currently' },
+        { value: 'looking', label: 'Looking to switch' },
+      ]
+    },
+    {
+      key: 'ownsHome',
+      title: 'Do you own your home?',
+      options: [
+        { value: 'yes', label: 'Yes' },
+        { value: 'no', label: 'No' },
+      ]
+    },
+    {
+      key: 'primaryGoal',
+      title: 'What is your primary financial goal?',
+      options: [
+        { value: 'retirement', label: 'Retirement planning' },
+        { value: 'wealth', label: 'Growing my wealth' },
+        { value: 'preserve', label: 'Preserving what I have' },
+        { value: 'estate', label: 'Estate planning' },
+        { value: 'tax', label: 'Tax optimization' },
+      ]
+    },
+  ];
+
+  // Phase 2 questions (Advisor branding)
+  const phase2Questions = [
+    {
+      key: 'pastExperience',
+      title: 'How would you describe your experience with financial planning?',
+      subtitle: 'This helps us tailor your session',
+      options: [
+        { value: 'new', label: 'New to financial planning' },
+        { value: 'some', label: 'Some experience, looking for guidance' },
+        { value: 'experienced', label: 'Experienced, seeking a second opinion' },
+        { value: 'switching', label: 'Looking to improve my current situation' },
+      ]
+    },
+    {
+      key: 'riskTolerance',
+      title: 'How would you describe your risk tolerance?',
+      options: [
+        { value: 'conservative', label: 'Conservative - Preserve capital' },
+        { value: 'moderate', label: 'Moderate - Balanced approach' },
+        { value: 'aggressive', label: 'Aggressive - Growth focused' },
+      ]
+    },
+    {
+      key: 'meetingPreference',
+      title: 'How do you prefer to meet?',
+      options: [
+        { value: 'video', label: 'Video call' },
+        { value: 'phone', label: 'Phone call' },
+        { value: 'inperson', label: 'In person' },
+        { value: 'flexible', label: 'I\'m flexible' },
+      ]
+    },
+    {
+      key: 'urgency',
+      title: 'When would you like to get started?',
+      options: [
+        { value: 'asap', label: 'As soon as possible' },
+        { value: 'week', label: 'Within a week' },
+        { value: 'month', label: 'Within a month' },
+        { value: 'exploring', label: 'Just exploring options' },
+      ]
+    },
+    {
+      key: 'concerns',
+      title: 'What concerns you most about your finances?',
+      options: [
+        { value: 'outliving', label: 'Outliving my savings' },
+        { value: 'market', label: 'Market volatility' },
+        { value: 'taxes', label: 'Paying too much in taxes' },
+        { value: 'legacy', label: 'Leaving a legacy' },
+        { value: 'healthcare', label: 'Healthcare costs' },
+      ]
+    },
+  ];
+
+  const totalPhase1 = phase1Questions.length;
+  const totalPhase2 = phase2Questions.length;
+  const totalSteps = totalPhase1 + totalPhase2 + 1; // +1 for contact form
+
+  const isPhase1 = currentStep <= totalPhase1;
+  const isPhase2 = currentStep > totalPhase1 && currentStep <= totalPhase1 + totalPhase2;
+  const isContactStep = currentStep > totalPhase1 + totalPhase2;
+
+  const currentQuestion = isPhase1
+    ? phase1Questions[currentStep - 1]
+    : isPhase2
+      ? phase2Questions[currentStep - totalPhase1 - 1]
+      : null;
+
+  // Advisor Reveal Screen
+  if (showAdvisorReveal && advisor) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <nav className="bg-white border-b border-gray-100 px-6 py-4">
+          <div className="max-w-5xl mx-auto">
+            <Image src="/logo.png" alt="AssetPlanly" width={150} height={36} className="h-8 w-auto" />
+          </div>
+        </nav>
+
+        <div className="flex-1 flex items-center justify-center px-6 py-12">
+          <div className="max-w-5xl w-full">
+            <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+              <div className="grid md:grid-cols-2">
+                {/* Left - Advisor */}
+                <div className="p-10 text-center" style={{ backgroundColor: primaryColor }}>
+                  {advisor.photo_url ? (
+                    <img src={advisor.photo_url} alt="" className="w-32 h-32 rounded-full mx-auto mb-6 object-cover border-4 border-white/20" />
+                  ) : (
+                    <div className="w-32 h-32 rounded-full bg-white/20 mx-auto mb-6 flex items-center justify-center text-white text-4xl font-bold">
+                      {advisor.name?.charAt(0)}
+                    </div>
+                  )}
+
+                  <h2 className="text-2xl font-bold text-white mb-1">{advisor.name}</h2>
+                  <p className="text-white/80 mb-4">{advisor.firm_name}</p>
+
+                  {advisor.bio && (
+                    <p className="text-white/70 text-sm leading-relaxed mb-6 max-w-sm mx-auto">
+                      {advisor.bio}
+                    </p>
+                  )}
+
+                  {advisor.phone && (
+                    <p className="text-white/60 text-sm">{advisor.phone}</p>
+                  )}
+                </div>
+
+                {/* Right - Message */}
+                <div className="p-10 flex flex-col justify-center">
+                  <div className="mb-6">
+                    <span className="inline-block px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full mb-4">
+                      Great News
+                    </span>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                      We Found Your Advisor
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      We work hard to cultivate relationships with the right fiduciaries. Based on your needs, <strong>{advisor.name}</strong> {advisor.firm_name && `and the team at ${advisor.firm_name}`} are an excellent fit for you.
+                    </p>
+                  </div>
+
+                  <div className="border-t border-gray-100 pt-6 mb-6">
+                    <p className="text-gray-600 mb-6">
+                      Let's answer a few more questions to prepare for your complimentary planning session.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={continueAfterReveal}
+                    className="w-full py-4 rounded-xl font-semibold text-lg text-white transition-all hover:opacity-90"
+                    style={{ backgroundColor: primaryColor }}
+                  >
+                    Continue to Schedule
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Success screen
   if (isSubmitted) {
     return (
@@ -95,7 +321,7 @@ function MatchFlow() {
           {advisor?.logo_url ? (
             <img src={advisor.logo_url} alt="" className="h-10 brightness-0 invert" />
           ) : (
-            <span className="text-2xl font-bold text-white">AssetPlanly</span>
+            <span className="text-2xl font-bold text-white">{advisor?.firm_name || 'AssetPlanly'}</span>
           )}
         </nav>
 
@@ -108,16 +334,16 @@ function MatchFlow() {
             </div>
 
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Your Plan is Being Prepared
+              You're All Set!
             </h1>
 
             <p className="text-lg text-white/80 mb-8">
-              {advisor?.name || 'Your dedicated advisor'} will contact you within 24 hours to review your personalized financial plan.
+              {advisor?.name || 'Your advisor'} will contact you within 24 hours to schedule your complimentary planning session.
             </p>
 
             {advisor && (
               <div className="bg-white/10 backdrop-blur rounded-2xl p-6 mb-8">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 justify-center">
                   {advisor.photo_url ? (
                     <img src={advisor.photo_url} alt="" className="w-16 h-16 rounded-full object-cover" />
                   ) : (
@@ -142,75 +368,19 @@ function MatchFlow() {
     );
   }
 
-  const questions = [
-    {
-      key: 'portfolioSize',
-      title: 'What are your total investable assets?',
-      subtitle: 'Include retirement accounts, savings, and investments',
-      options: [
-        { value: 'under-100k', label: 'Under $100K' },
-        { value: '100k-250k', label: '$100K - $250K' },
-        { value: '250k-500k', label: '$250K - $500K' },
-        { value: '500k-1m', label: '$500K - $1M' },
-        { value: '1m-5m', label: '$1M - $5M' },
-        { value: '5m+', label: '$5M+' },
-      ]
-    },
-    {
-      key: 'retireTimeline',
-      title: 'When do you plan to retire?',
-      subtitle: 'Or when did you retire?',
-      options: [
-        { value: '1-5', label: 'Within 5 years' },
-        { value: '5-10', label: '5-10 years' },
-        { value: '10+', label: '10+ years' },
-        { value: 'retired', label: 'Already retired' },
-      ]
-    },
-    {
-      key: 'income',
-      title: 'What is your household income?',
-      subtitle: 'Annual pre-tax income',
-      options: [
-        { value: 'under-75k', label: 'Under $75K' },
-        { value: '75k-150k', label: '$75K - $150K' },
-        { value: '150k-250k', label: '$150K - $250K' },
-        { value: '250k-500k', label: '$250K - $500K' },
-        { value: '500k+', label: '$500K+' },
-      ]
-    },
-    {
-      key: 'hasAdvisor',
-      title: 'Do you currently work with a financial advisor?',
-      options: [
-        { value: 'yes', label: 'Yes, I have an advisor' },
-        { value: 'no', label: 'No, not currently' },
-        { value: 'looking', label: 'Looking to switch' },
-      ]
-    },
-    {
-      key: 'ownsHome',
-      title: 'Do you own your home?',
-      options: [
-        { value: 'yes', label: 'Yes' },
-        { value: 'no', label: 'No' },
-      ]
-    },
-  ];
-
-  const totalSteps = questions.length + 1; // +1 for contact form
-  const currentQuestion = questions[currentStep - 1];
-  const isContactStep = currentStep > questions.length;
+  // Determine branding for current phase
+  const usesAdvisorBranding = isPhase2 || isContactStep;
+  const brandColor = usesAdvisorBranding ? primaryColor : '#1e3a5f';
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header */}
       <nav className="bg-white border-b border-gray-100 px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          {advisor?.logo_url ? (
+          {usesAdvisorBranding && advisor?.logo_url ? (
             <img src={advisor.logo_url} alt="" className="h-8" />
           ) : (
-            <span className="text-xl font-bold" style={{ color: primaryColor }}>AssetPlanly</span>
+            <Image src="/logo.png" alt="AssetPlanly" width={150} height={36} className="h-8 w-auto" />
           )}
           <div className="text-sm text-gray-400">
             {currentStep} of {totalSteps}
@@ -222,7 +392,7 @@ function MatchFlow() {
       <div className="h-1 bg-gray-200">
         <div
           className="h-1 transition-all duration-500"
-          style={{ width: `${(currentStep / totalSteps) * 100}%`, backgroundColor: primaryColor }}
+          style={{ width: `${(currentStep / totalSteps) * 100}%`, backgroundColor: brandColor }}
         />
       </div>
 
@@ -239,16 +409,16 @@ function MatchFlow() {
               {currentQuestion.subtitle && (
                 <p className="text-gray-500 text-center mb-10">{currentQuestion.subtitle}</p>
               )}
+              {!currentQuestion.subtitle && <div className="mb-10" />}
 
               <div className="space-y-3">
                 {currentQuestion.options.map((opt) => (
                   <button
                     key={opt.value}
                     onClick={() => handleSelect(currentQuestion.key, opt.value)}
-                    className="w-full p-5 rounded-xl border-2 transition-all hover:shadow-md text-left flex items-center justify-between group"
+                    className="w-full p-5 rounded-xl border-2 transition-all hover:shadow-md text-left flex items-center justify-between group bg-white"
                     style={{
-                      borderColor: formData[currentQuestion.key] === opt.value ? primaryColor : '#e5e7eb',
-                      backgroundColor: formData[currentQuestion.key] === opt.value ? `${primaryColor}08` : '#fff'
+                      borderColor: formData[currentQuestion.key] === opt.value ? brandColor : '#e5e7eb',
                     }}
                   >
                     <span className="text-lg font-medium text-gray-900">{opt.label}</span>
@@ -274,16 +444,16 @@ function MatchFlow() {
           {isContactStep && (
             <div className="animate-fadeIn">
               <div className="text-center mb-10">
-                <div className="w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center" style={{ backgroundColor: `${primaryColor}15` }}>
-                  <svg className="w-8 h-8" style={{ color: primaryColor }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <div className="w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center" style={{ backgroundColor: `${brandColor}15` }}>
+                  <svg className="w-8 h-8" style={{ color: brandColor }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
                 <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-                  Almost Done!
+                  Schedule Your Session
                 </h2>
                 <p className="text-gray-500">
-                  Enter your details to receive your complimentary financial plan.
+                  Enter your details and {advisor?.name || 'your advisor'} will reach out to confirm your complimentary planning session.
                 </p>
               </div>
 
@@ -299,7 +469,6 @@ function MatchFlow() {
                         onChange={handleChange}
                         required
                         className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:border-transparent outline-none"
-                        style={{ '--tw-ring-color': primaryColor }}
                       />
                     </div>
                     <div>
@@ -362,9 +531,9 @@ function MatchFlow() {
                     type="submit"
                     disabled={isSubmitting || !formData.firstName || !formData.email || !formData.phone}
                     className="w-full py-4 rounded-xl font-semibold text-lg text-white transition-all disabled:opacity-50"
-                    style={{ backgroundColor: primaryColor }}
+                    style={{ backgroundColor: brandColor }}
                   >
-                    {isSubmitting ? 'Preparing Your Plan...' : 'Get My Free Plan'}
+                    {isSubmitting ? 'Scheduling...' : 'Schedule My Free Session'}
                   </button>
                 </div>
 
@@ -374,7 +543,7 @@ function MatchFlow() {
               </form>
 
               <button
-                onClick={() => setCurrentStep(questions.length)}
+                onClick={() => setCurrentStep(totalPhase1 + totalPhase2)}
                 className="mt-6 text-gray-400 hover:text-gray-600 font-medium mx-auto block"
               >
                 ← Back
@@ -386,7 +555,7 @@ function MatchFlow() {
       </div>
 
       {/* Footer */}
-      <div className="py-4 px-6" style={{ backgroundColor: primaryColor }}>
+      <div className="py-4 px-6" style={{ backgroundColor: brandColor }}>
         <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-8 text-sm text-white/80">
           <span>Free Consultation</span>
           <span>•</span>
@@ -409,14 +578,14 @@ function MatchFlow() {
   );
 }
 
-export default function MatchPage() {
+export default function PlanPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-gray-400">Loading...</div>
       </div>
     }>
-      <MatchFlow />
+      <PlanFlow />
     </Suspense>
   );
 }
