@@ -164,9 +164,9 @@ export default function FindAdvisorPage() {
         <img
           src="/paper-airplane-2.png"
           alt=""
-          className="absolute top-0 right-0 w-96 h-auto opacity-40 pointer-events-none hidden lg:block"
+          className="absolute top-20 right-0 w-96 h-auto pointer-events-none hidden lg:block"
           style={{
-            transform: 'scaleX(-1) translateX(20%) translateY(-10%)',
+            transform: 'scaleX(-1) translateX(15%)',
             zIndex: 1,
           }}
         />
