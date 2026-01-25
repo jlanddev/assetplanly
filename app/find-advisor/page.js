@@ -61,12 +61,18 @@ export default function FindAdvisorPage() {
           </div>
         </div>
 
-        {/* Paper airplane flying down - positioned at bottom right of hero */}
-        <div className="absolute right-32 -bottom-16 hidden lg:block z-20">
+        {/* Paper airplane trail - spans from header down to next section */}
+        <div
+          className="absolute right-24 top-0 bottom-0 hidden lg:block z-10 pointer-events-none"
+          style={{
+            maskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 100%)',
+          }}
+        >
           <img
             src="/paper-airplane.png"
             alt=""
-            className="w-48"
+            className="h-full w-auto object-contain object-bottom"
             style={{ transform: 'scaleY(-1)' }}
           />
         </div>
