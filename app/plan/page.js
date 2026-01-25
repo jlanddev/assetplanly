@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import Link from "next/link";
 
 function MatchFlow() {
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [advisor, setAdvisor] = useState(null);
