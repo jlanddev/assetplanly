@@ -13,17 +13,18 @@ function PlanFlow() {
   const [showAdvisorReveal, setShowAdvisorReveal] = useState(false);
 
   const [formData, setFormData] = useState({
-    // Phase 1 - to determine advisor
-    portfolioSize: '',
+    // Phase 1 - qualifying questions to find advisor
     zipCode: '',
-    // Phase 2 - with advisor branding
-    income: '',
     retireTimeline: '',
     ownsHome: '',
     ownsBusiness: '',
     hasAdvisor: '',
+    whySwitching: '', // follow-up if hasAdvisor = yes
     localPreference: '',
-    // Contact
+    portfolioSize: '',
+    income: '',
+    // Phase 2 - scheduling (after advisor found)
+    meetingGoals: '',
     firstName: '',
     lastName: '',
     email: '',
@@ -57,23 +58,27 @@ function PlanFlow() {
   const handleSelect = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
 
-    // After ZIP code (step 2), fetch advisor and show reveal
-    if (currentStep === 2) {
+    // Determine next step
+    let nextStep = currentStep + 1;
+
+    // If user says they DON'T have an advisor, skip the whySwitching question
+    if (field === 'hasAdvisor' && value === 'no') {
+      // Skip the whySwitching question (which is the next one)
+      nextStep = currentStep + 2;
+    }
+
+    // Check if we've answered the last question (income) - fetch advisor
+    const lastQuestionStep = totalPhase1;
+    if (currentStep === lastQuestionStep || nextStep > lastQuestionStep) {
       setTimeout(() => fetchAdvisor(), 300);
     } else {
-      setTimeout(() => setCurrentStep(prev => prev + 1), 250);
+      setTimeout(() => setCurrentStep(nextStep), 250);
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleZipSubmit = () => {
-    if (formData.zipCode.length === 5) {
-      fetchAdvisor();
-    }
   };
 
   const formatPhone = (value) => {
@@ -85,7 +90,7 @@ function PlanFlow() {
 
   const continueAfterReveal = () => {
     setShowAdvisorReveal(false);
-    setCurrentStep(3);
+    setCurrentStep(totalPhase1 + 1); // Go to contact/scheduling step
   };
 
   const handleSubmit = async (e) => {
@@ -108,7 +113,9 @@ function PlanFlow() {
           ownsBusiness: formData.ownsBusiness,
           portfolioSize: formData.portfolioSize,
           hasAdvisor: formData.hasAdvisor,
+          whySwitching: formData.whySwitching,
           localPreference: formData.localPreference,
+          meetingGoals: formData.meetingGoals,
           matchedAdvisorId: advisor?.id,
           source: 'concierge'
         }),
@@ -124,37 +131,9 @@ function PlanFlow() {
     }
   };
 
-  // Phase 1: Get assets + location to determine advisor
+  // Phase 1: Qualifying questions to find the right advisor
+  // Non-money questions first, then money questions at the end
   const phase1Questions = [
-    {
-      key: 'portfolioSize',
-      title: 'What are your total investable assets?',
-      subtitle: 'Include retirement accounts, savings, and investments',
-      options: [
-        { value: 'under-100k', label: 'Under $100,000' },
-        { value: '100k-250k', label: '$100,000 - $250,000' },
-        { value: '250k-500k', label: '$250,000 - $500,000' },
-        { value: '500k-1m', label: '$500,000 - $1,000,000' },
-        { value: '1m-5m', label: '$1,000,000 - $5,000,000' },
-        { value: '5m+', label: '$5,000,000+' },
-      ]
-    },
-  ];
-
-  // Phase 2: SmartAsset style questions with advisor branding
-  const phase2Questions = [
-    {
-      key: 'income',
-      title: 'What is your household income?',
-      options: [
-        { value: 'under-40k', label: 'Less than $40,000' },
-        { value: '40k-75k', label: '$40,000 - $74,999' },
-        { value: '75k-100k', label: '$75,000 - $99,999' },
-        { value: '100k-150k', label: '$100,000 - $149,999' },
-        { value: '150k-250k', label: '$150,000 - $249,999' },
-        { value: '250k+', label: '$250,000+' },
-      ]
-    },
     {
       key: 'retireTimeline',
       title: 'When do you plan to retire?',
@@ -190,6 +169,20 @@ function PlanFlow() {
       ]
     },
     {
+      key: 'whySwitching',
+      title: 'What has you considering a change?',
+      subtitle: 'This helps us understand your needs better',
+      conditional: true, // only show if hasAdvisor = yes
+      options: [
+        { value: 'not-responsive', label: 'My advisor isn\'t responsive' },
+        { value: 'poor-performance', label: 'Not happy with performance' },
+        { value: 'high-fees', label: 'Fees are too high' },
+        { value: 'need-more-services', label: 'Need more comprehensive planning' },
+        { value: 'second-opinion', label: 'Just want a second opinion' },
+        { value: 'other', label: 'Other reasons' },
+      ]
+    },
+    {
       key: 'localPreference',
       title: 'Does your advisor need to be local?',
       subtitle: 'All advisors can meet via phone or video',
@@ -199,35 +192,69 @@ function PlanFlow() {
         { value: 'flexible', label: 'No preference' },
       ]
     },
+    // Money questions at the end
+    {
+      key: 'portfolioSize',
+      title: 'What are your total investable assets?',
+      subtitle: 'Include retirement accounts, savings, and investments',
+      options: [
+        { value: 'under-100k', label: 'Under $100,000' },
+        { value: '100k-250k', label: '$100,000 - $250,000' },
+        { value: '250k-500k', label: '$250,000 - $500,000' },
+        { value: '500k-1m', label: '$500,000 - $1,000,000' },
+        { value: '1m-5m', label: '$1,000,000 - $5,000,000' },
+        { value: '5m+', label: '$5,000,000+' },
+      ]
+    },
+    {
+      key: 'income',
+      title: 'What is your household income?',
+      options: [
+        { value: 'under-40k', label: 'Less than $40,000' },
+        { value: '40k-75k', label: '$40,000 - $74,999' },
+        { value: '75k-100k', label: '$75,000 - $99,999' },
+        { value: '100k-150k', label: '$100,000 - $149,999' },
+        { value: '150k-250k', label: '$150,000 - $249,999' },
+        { value: '250k+', label: '$250,000+' },
+      ]
+    },
   ];
 
-  const totalPhase1 = 2; // assets + zip
-  const totalPhase2 = phase2Questions.length;
-  const totalSteps = totalPhase1 + totalPhase2 + 1; // +1 for contact
+  const totalPhase1 = 1 + phase1Questions.length; // zip + questions
+  const totalSteps = totalPhase1 + 1; // +1 for contact/scheduling
 
-  const isPhase1 = currentStep <= totalPhase1;
-  const isPhase2 = currentStep > totalPhase1 && currentStep <= totalPhase1 + totalPhase2;
-  const isContactStep = currentStep > totalPhase1 + totalPhase2;
+  const isZipStep = currentStep === 1;
+  const isQuestionStep = currentStep > 1 && currentStep <= totalPhase1;
+  const isContactStep = currentStep > totalPhase1;
 
-  const currentQuestion = isPhase1 && currentStep === 1
-    ? phase1Questions[0]
-    : isPhase2
-      ? phase2Questions[currentStep - totalPhase1 - 1]
-      : null;
+  const currentQuestion = isQuestionStep
+    ? phase1Questions[currentStep - 2] // -2 because step 1 is zip
+    : null;
 
-  // ZIP Code step
-  if (currentStep === 2 && !showAdvisorReveal) {
+  // Skip conditional questions that don't apply
+  const shouldSkipCurrentQuestion = currentQuestion?.conditional &&
+    currentQuestion.key === 'whySwitching' && formData.hasAdvisor !== 'yes';
+
+  // Auto-skip conditional questions that don't apply
+  useEffect(() => {
+    if (shouldSkipCurrentQuestion && !showAdvisorReveal) {
+      setCurrentStep(prev => prev + 1);
+    }
+  }, [shouldSkipCurrentQuestion, showAdvisorReveal]);
+
+  // ZIP Code step (step 1)
+  if (isZipStep && !showAdvisorReveal) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50">
         <nav className="bg-white border-b border-gray-100 px-6 py-4">
           <div className="max-w-4xl mx-auto flex items-center justify-between">
             <Image src="/logo.png" alt="AssetPlanly" width={150} height={36} className="h-8 w-auto" />
-            <div className="text-sm text-gray-400">2 of {totalSteps}</div>
+            <div className="text-sm text-gray-400">1 of {totalSteps}</div>
           </div>
         </nav>
 
         <div className="h-1 bg-gray-200">
-          <div className="h-1 transition-all duration-500 bg-[#1e3a5f]" style={{ width: `${(2 / totalSteps) * 100}%` }} />
+          <div className="h-1 transition-all duration-500 bg-[#1e3a5f]" style={{ width: `${(1 / totalSteps) * 100}%` }} />
         </div>
 
         <div className="flex-1 flex items-center justify-center px-6 py-12">
@@ -248,20 +275,13 @@ function PlanFlow() {
               />
 
               <button
-                onClick={handleZipSubmit}
+                onClick={() => setCurrentStep(2)}
                 disabled={formData.zipCode.length !== 5}
                 className="w-full mt-6 py-4 rounded-xl font-semibold text-lg text-white transition-all disabled:opacity-50 bg-[#1e3a5f]"
               >
                 Continue
               </button>
             </div>
-
-            <button
-              onClick={() => setCurrentStep(1)}
-              className="mt-8 text-gray-400 hover:text-gray-600 font-medium mx-auto block"
-            >
-              ← Back
-            </button>
           </div>
         </div>
 
@@ -556,6 +576,30 @@ function PlanFlow() {
 
               <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
                 <div className="space-y-5">
+                  {/* Meeting Goals - required 150 chars */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      What are you hoping to get out of this meeting?
+                    </label>
+                    <textarea
+                      name="meetingGoals"
+                      value={formData.meetingGoals}
+                      onChange={handleChange}
+                      required
+                      rows={4}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:border-transparent outline-none resize-none"
+                      placeholder="Tell us about your financial goals, questions you have, or what you'd like to discuss..."
+                    />
+                    <div className="flex justify-between mt-2 text-xs">
+                      <span className={formData.meetingGoals.length < 150 ? 'text-amber-600' : 'text-green-600'}>
+                        {formData.meetingGoals.length < 150
+                          ? `${150 - formData.meetingGoals.length} more characters needed`
+                          : 'Looks good!'}
+                      </span>
+                      <span className="text-gray-400">{formData.meetingGoals.length}/150 min</span>
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
@@ -614,7 +658,7 @@ function PlanFlow() {
 
                   <button
                     type="submit"
-                    disabled={isSubmitting || !formData.firstName || !formData.email || !formData.phone}
+                    disabled={isSubmitting || !formData.firstName || !formData.email || !formData.phone || formData.meetingGoals.length < 150}
                     className="w-full py-4 rounded-xl font-semibold text-lg text-white transition-all disabled:opacity-50"
                     style={{ backgroundColor: brandColor }}
                   >
@@ -628,7 +672,7 @@ function PlanFlow() {
               </form>
 
               <button
-                onClick={() => setCurrentStep(totalPhase1 + totalPhase2)}
+                onClick={() => setCurrentStep(totalPhase1)}
                 className="mt-6 text-gray-400 hover:text-gray-600 font-medium mx-auto block"
               >
                 ← Back
