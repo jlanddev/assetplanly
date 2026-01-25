@@ -2,8 +2,27 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function FindAdvisorPage() {
+  const router = useRouter();
+
+  const handleGetStarted = (e) => {
+    e.preventDefault();
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      window.gtag('event', 'conversion', {
+        'send_to': 'AW-17733369236/on9LCMmR4sAbEJT79odC',
+        'value': 1.0,
+        'currency': 'USD',
+        'event_callback': () => router.push('/plan')
+      });
+      // Fallback in case callback doesn't fire
+      setTimeout(() => router.push('/plan'), 1000);
+    } else {
+      router.push('/plan');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#faf9f7]">
       {/* Navigation */}
@@ -16,13 +35,13 @@ export default function FindAdvisorPage() {
             <div className="hidden md:flex items-center gap-10">
               <a href="#how-it-works" className="text-slate-600 hover:text-slate-900 font-medium transition">How It Works</a>
               <a href="#why-us" className="text-slate-600 hover:text-slate-900 font-medium transition">Why Us</a>
-              <Link href="/plan" className="bg-[#e5b94e] text-slate-900 px-6 py-3 rounded-lg font-semibold hover:bg-[#d4a93d] transition-all shadow-sm">
+              <button onClick={handleGetStarted} className="bg-[#e5b94e] text-slate-900 px-6 py-3 rounded-lg font-semibold hover:bg-[#d4a93d] transition-all shadow-sm cursor-pointer">
                 Get Started
-              </Link>
+              </button>
             </div>
-            <Link href="/plan" className="md:hidden bg-[#e5b94e] text-slate-900 px-5 py-2.5 rounded-lg font-semibold text-sm">
+            <button onClick={handleGetStarted} className="md:hidden bg-[#e5b94e] text-slate-900 px-5 py-2.5 rounded-lg font-semibold text-sm cursor-pointer">
               Get Started
-            </Link>
+            </button>
           </div>
         </div>
       </nav>
@@ -41,9 +60,9 @@ export default function FindAdvisorPage() {
                 Getting started is easy and complimentary.
               </p>
 
-              <Link href="/plan" className="inline-block bg-[#e5b94e] text-slate-900 px-6 lg:px-8 py-3 lg:py-4 rounded-lg font-semibold text-base lg:text-lg hover:bg-[#d4a93d] transition-all">
+              <button onClick={handleGetStarted} className="inline-block bg-[#e5b94e] text-slate-900 px-6 lg:px-8 py-3 lg:py-4 rounded-lg font-semibold text-base lg:text-lg hover:bg-[#d4a93d] transition-all cursor-pointer">
                 Find my advisor
-              </Link>
+              </button>
             </div>
 
 
@@ -150,9 +169,9 @@ export default function FindAdvisorPage() {
             </div>
 
             <div className="mt-10">
-              <Link href="/plan" className="inline-block bg-[#e5b94e] text-slate-900 px-8 py-4 rounded-lg font-semibold hover:bg-[#d4a93d] transition-all">
+              <button onClick={handleGetStarted} className="inline-block bg-[#e5b94e] text-slate-900 px-8 py-4 rounded-lg font-semibold hover:bg-[#d4a93d] transition-all cursor-pointer">
                 Find my advisor
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -241,12 +260,12 @@ export default function FindAdvisorPage() {
           <p className="text-xl text-white/70 mb-10">
             Takes less than 2 minutes. No obligation.
           </p>
-          <Link href="/plan" className="inline-flex items-center gap-3 bg-[#e5b94e] text-slate-900 px-10 py-5 rounded-lg font-bold text-lg hover:bg-[#d4a93d] transition-all shadow-lg">
+          <button onClick={handleGetStarted} className="inline-flex items-center gap-3 bg-[#e5b94e] text-slate-900 px-10 py-5 rounded-lg font-bold text-lg hover:bg-[#d4a93d] transition-all shadow-lg cursor-pointer">
             Find My Advisor
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
-          </Link>
+          </button>
         </div>
 
         {/* Financial icons - smaller, at bottom rising up */}
