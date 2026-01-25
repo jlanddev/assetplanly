@@ -49,43 +49,20 @@ export default function FindAdvisorPage() {
                 </svg>
               </Link>
 
-              {/* Trust indicators */}
-              <div className="flex flex-wrap items-center gap-6 mt-10">
-                <div className="flex items-center gap-3 bg-white px-4 py-3 rounded-xl shadow-sm">
-                  <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
-                    <svg className="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="font-semibold text-slate-900">Fiduciary</div>
-                    <div className="text-sm text-slate-500">Your interests first</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 bg-white px-4 py-3 rounded-xl shadow-sm">
-                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="font-semibold text-slate-900">Vetted</div>
-                    <div className="text-sm text-slate-500">Highly qualified</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 bg-white px-4 py-3 rounded-xl shadow-sm">
-                  <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-                    <svg className="w-5 h-5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="font-semibold text-slate-900">Matched</div>
-                    <div className="text-sm text-slate-500">Right fit for you</div>
-                  </div>
-                </div>
+              {/* Simple trust line */}
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-10 text-sm text-slate-500">
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#1e3a5f]"></span>
+                  Fiduciary advisors only
+                </span>
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#1e3a5f]"></span>
+                  SEC registered
+                </span>
+                <span className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#1e3a5f]"></span>
+                  No obligation
+                </span>
               </div>
             </div>
 
@@ -105,38 +82,22 @@ export default function FindAdvisorPage() {
                   </div>
                 </div>
 
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                      <svg className="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-slate-700">Introduction to a qualified fiduciary</span>
+                <div className="space-y-3 mb-8">
+                  <div className="flex items-center gap-3 text-slate-600">
+                    <span className="text-[#1e3a5f] font-medium">→</span>
+                    <span>Introduction to a qualified fiduciary</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                      <svg className="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-slate-700">Advisor matched to your situation</span>
+                  <div className="flex items-center gap-3 text-slate-600">
+                    <span className="text-[#1e3a5f] font-medium">→</span>
+                    <span>Advisor matched to your situation</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                      <svg className="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-slate-700">Complimentary planning meeting</span>
+                  <div className="flex items-center gap-3 text-slate-600">
+                    <span className="text-[#1e3a5f] font-medium">→</span>
+                    <span>Complimentary planning meeting</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                      <svg className="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-slate-700">No obligation to proceed</span>
+                  <div className="flex items-center gap-3 text-slate-600">
+                    <span className="text-[#1e3a5f] font-medium">→</span>
+                    <span>No obligation to proceed</span>
                   </div>
                 </div>
 
