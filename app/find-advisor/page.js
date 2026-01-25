@@ -249,15 +249,15 @@ export default function FindAdvisorPage() {
           </Link>
         </div>
 
-        {/* Financial icons - stretched full width, rising from bottom */}
-        <div className="absolute bottom-0 left-0 right-0 pointer-events-none overflow-hidden">
+        {/* Financial icons - smaller, at bottom rising up */}
+        <div className="absolute -bottom-4 left-0 right-0 pointer-events-none overflow-hidden">
           <img
             src="/financial-icons.png"
             alt=""
-            className="w-[200%] max-w-none h-auto opacity-10 -translate-x-1/4 translate-y-1/4"
+            className="w-full h-auto opacity-10 translate-y-1/2"
             style={{
-              maskImage: 'linear-gradient(to top, black 0%, transparent 70%)',
-              WebkitMaskImage: 'linear-gradient(to top, black 0%, transparent 70%)',
+              maskImage: 'linear-gradient(to top, black 0%, transparent 50%)',
+              WebkitMaskImage: 'linear-gradient(to top, black 0%, transparent 50%)',
             }}
           />
         </div>
