@@ -28,9 +28,9 @@ export default function FindAdvisorPage() {
       </nav>
 
       {/* Hero */}
-      <section className="relative bg-white overflow-hidden">
+      <section className="relative bg-white overflow-hidden pb-16">
         <div className="max-w-7xl mx-auto px-6 lg:px-16">
-          <div className="flex items-center min-h-[500px] lg:min-h-[600px] py-12">
+          <div className="flex items-center min-h-[500px] lg:min-h-[550px] py-12">
             {/* Content */}
             <div className="max-w-xl relative z-10">
               <h1 className="text-4xl md:text-5xl lg:text-[56px] font-bold text-slate-900 leading-[1.08] mb-6">
@@ -46,30 +46,47 @@ export default function FindAdvisorPage() {
               </Link>
             </div>
 
-            {/* Illustration fading to right */}
+            {/* Couple line drawing - faded on all sides */}
             <div
-              className="absolute right-0 top-1/2 -translate-y-1/2 w-[50%] h-full hidden lg:block pointer-events-none"
+              className="absolute right-8 lg:right-16 top-1/2 -translate-y-1/2 w-[45%] h-[80%] hidden lg:block pointer-events-none"
               style={{
-                maskImage: 'linear-gradient(to right, transparent 0%, black 30%)',
-                WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 30%)',
+                maskImage: 'radial-gradient(ellipse 70% 70% at center, black 30%, transparent 70%)',
+                WebkitMaskImage: 'radial-gradient(ellipse 70% 70% at center, black 30%, transparent 70%)',
               }}
             >
               <img
-                src="/couple-illustration.png"
-                alt="Couple planning finances"
-                className="h-full w-full object-contain object-right"
+                src="/couple-line-drawing.png"
+                alt="Couple reviewing financial plans"
+                className="h-full w-full object-contain"
               />
             </div>
           </div>
         </div>
 
+        {/* Paper airplane flying down to next section - flipped upside down */}
+        <div className="absolute right-20 bottom-0 translate-y-1/2 hidden lg:block z-20">
+          <img
+            src="/paper-airplane.png"
+            alt=""
+            className="w-32 h-auto"
+            style={{ transform: 'rotate(180deg)' }}
+          />
+        </div>
+
         {/* Mobile illustration */}
         <div className="lg:hidden flex justify-center pb-8">
-          <img
-            src="/couple-illustration.png"
-            alt="Couple planning finances"
-            className="h-48 object-contain"
-          />
+          <div
+            style={{
+              maskImage: 'radial-gradient(ellipse 80% 80% at center, black 40%, transparent 70%)',
+              WebkitMaskImage: 'radial-gradient(ellipse 80% 80% at center, black 40%, transparent 70%)',
+            }}
+          >
+            <img
+              src="/couple-line-drawing.png"
+              alt="Couple reviewing financial plans"
+              className="h-52 object-contain"
+            />
+          </div>
         </div>
       </section>
 
