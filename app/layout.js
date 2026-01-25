@@ -25,6 +25,19 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        {/* Google tag (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-17733369236"
+          strategy="afterInteractive"
+        />
+        <Script id="google-ads" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-17733369236');
+          `}
+        </Script>
         <noscript>
           <img
             height="1"
