@@ -29,11 +29,26 @@ export default function FindAdvisorPage() {
 
       {/* Hero */}
       <section className="relative bg-white overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-20 left-10 w-32 h-32 border border-dashed border-slate-200 rounded-full opacity-40 hidden lg:block" />
+        <div className="absolute bottom-40 left-1/4 w-2 h-2 bg-[#e5b94e] rounded-full hidden lg:block" />
+        <div className="absolute top-1/3 left-20 w-1 h-1 bg-[#1e3a5f] rounded-full hidden lg:block" />
+
+        {/* Dotted path decoration */}
+        <svg className="absolute top-32 left-40 w-40 h-40 hidden lg:block" viewBox="0 0 100 100" fill="none">
+          <path d="M10 80 Q 50 20, 90 50" stroke="#1e3a5f" strokeWidth="1" strokeDasharray="4 4" opacity="0.2" />
+        </svg>
+
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 min-h-[600px]">
             {/* Left - Content */}
             <div className="flex items-center px-6 lg:px-16 py-16">
-              <div className="max-w-lg">
+              <div className="max-w-lg relative">
+                {/* Small decorative arrow */}
+                <svg className="absolute -left-8 top-0 w-6 h-6 text-[#e5b94e] hidden lg:block" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L15 8H9L12 2Z" />
+                </svg>
+
                 <h1 className="text-4xl md:text-5xl lg:text-[56px] font-bold text-slate-900 leading-[1.08] mb-6">
                   You're in the right place for{' '}
                   <span className="text-[#1e3a5f]">expert financial advice</span>
@@ -92,9 +107,18 @@ export default function FindAdvisorPage() {
       </section>
 
       {/* How It Works - Split layout */}
-      <section id="how-it-works" className="grid lg:grid-cols-2">
+      <section id="how-it-works" className="grid lg:grid-cols-2 relative">
+        {/* Decorative dotted line connecting sections */}
+        <svg className="absolute -top-20 left-1/2 transform -translate-x-1/2 w-1 h-24 hidden lg:block" viewBox="0 0 2 100">
+          <line x1="1" y1="0" x2="1" y2="100" stroke="#1e3a5f" strokeWidth="2" strokeDasharray="6 6" opacity="0.2" />
+        </svg>
+
         {/* Image side */}
-        <div className="bg-[#b8e0e0] min-h-[500px] lg:min-h-[600px] flex items-end justify-center">
+        <div className="bg-[#b8e0e0] min-h-[500px] lg:min-h-[600px] flex items-end justify-center relative overflow-hidden">
+          {/* Decorative circle */}
+          <div className="absolute top-10 right-10 w-20 h-20 border-2 border-white/30 rounded-full" />
+          <div className="absolute bottom-20 left-10 w-3 h-3 bg-white/40 rounded-full" />
+
           <img
             src="https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=600&h=800&fit=crop"
             alt="Woman planning finances"
@@ -103,7 +127,7 @@ export default function FindAdvisorPage() {
         </div>
 
         {/* Content side */}
-        <div className="bg-[#f5f3ef] px-8 lg:px-16 py-16 flex items-center">
+        <div className="bg-[#f5f3ef] px-8 lg:px-16 py-16 flex items-center relative">
           <div className="max-w-md">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-10">How it works</h2>
 
