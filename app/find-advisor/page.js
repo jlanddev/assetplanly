@@ -28,7 +28,7 @@ export default function FindAdvisorPage() {
       </nav>
 
       {/* Hero */}
-      <section className="relative bg-white overflow-hidden pb-8 lg:pb-16">
+      <section className="relative bg-white overflow-hidden pb-4 lg:pb-16">
         <div className="max-w-7xl mx-auto px-6 lg:px-16">
           <div className="flex flex-col lg:flex-row lg:items-center lg:min-h-[550px] py-8 lg:py-12">
             {/* Content */}
@@ -46,14 +46,6 @@ export default function FindAdvisorPage() {
               </Link>
             </div>
 
-            {/* Mobile illustration - right after content */}
-            <div className="lg:hidden flex justify-center mt-8">
-              <img
-                src="/couple-line-drawing.png"
-                alt="Couple reviewing financial plans"
-                className="w-full max-w-xs object-contain"
-              />
-            </div>
 
             {/* Desktop couple line drawing - large, fading on edges */}
             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[55%] hidden lg:flex items-center justify-end pointer-events-none">
