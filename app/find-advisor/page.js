@@ -159,23 +159,17 @@ export default function FindAdvisorPage() {
       </section>
 
       {/* Why Us */}
-      <section id="why-us" className="py-24 px-6 bg-white relative overflow-hidden">
-        {/* Paper airplane flying down-right, behind top-right card */}
-        <div
-          className="absolute -top-10 right-0 w-64 h-auto pointer-events-none hidden lg:block"
+      <section id="why-us" className="py-24 px-6 bg-white relative">
+        {/* Paper airplane flying down-right, behind cards */}
+        <img
+          src="/paper-airplane-2.png"
+          alt=""
+          className="absolute top-16 right-8 w-48 h-auto opacity-20 pointer-events-none hidden lg:block"
           style={{
-            maskImage: 'linear-gradient(to bottom, transparent 0%, black 20%, black 100%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 20%, black 100%)',
+            transform: 'scaleX(-1)',
             zIndex: 0,
           }}
-        >
-          <img
-            src="/paper-airplane-2.png"
-            alt=""
-            className="w-full h-auto opacity-30"
-            style={{ transform: 'scaleX(-1)' }}
-          />
-        </div>
+        />
 
         <div className="max-w-5xl mx-auto relative z-10">
           <div className="text-center mb-16">
@@ -255,15 +249,15 @@ export default function FindAdvisorPage() {
           </Link>
         </div>
 
-        {/* Financial icons - depth of field from bottom */}
-        <div className="absolute bottom-0 left-0 right-0 pointer-events-none overflow-hidden">
+        {/* Financial icons - distant at bottom, rising up */}
+        <div className="absolute -bottom-8 left-0 right-0 pointer-events-none overflow-hidden">
           <img
             src="/financial-icons.png"
             alt=""
-            className="w-full h-auto opacity-15"
+            className="w-full h-auto opacity-10 translate-y-1/3"
             style={{
-              maskImage: 'linear-gradient(to top, black 0%, black 50%, transparent 100%)',
-              WebkitMaskImage: 'linear-gradient(to top, black 0%, black 50%, transparent 100%)',
+              maskImage: 'linear-gradient(to top, black 0%, transparent 60%)',
+              WebkitMaskImage: 'linear-gradient(to top, black 0%, transparent 60%)',
             }}
           />
         </div>
