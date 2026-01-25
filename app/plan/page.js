@@ -123,6 +123,16 @@ function PlanFlow() {
 
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || 'Failed to submit');
+
+      // Fire Google Ads lead conversion
+      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+        window.gtag('event', 'conversion', {
+          'send_to': 'AW-17733369236/on9LCMmR4sAbEJT79odC',
+          'value': 1.0,
+          'currency': 'USD'
+        });
+      }
+
       setIsSubmitted(true);
     } catch (err) {
       setError(err.message);
