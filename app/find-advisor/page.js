@@ -28,25 +28,34 @@ export default function FindAdvisorPage() {
       </nav>
 
       {/* Hero */}
-      <section className="relative bg-white overflow-hidden pb-16">
+      <section className="relative bg-white overflow-hidden pb-8 lg:pb-16">
         <div className="max-w-7xl mx-auto px-6 lg:px-16">
-          <div className="flex items-center min-h-[500px] lg:min-h-[550px] py-12">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:min-h-[550px] py-8 lg:py-12">
             {/* Content */}
             <div className="max-w-xl relative z-10">
-              <h1 className="text-4xl md:text-5xl lg:text-[56px] font-bold text-slate-900 leading-[1.08] mb-6">
+              <h1 className="text-3xl md:text-5xl lg:text-[56px] font-bold text-slate-900 leading-[1.08] mb-4 lg:mb-6">
                 You're in the right place for{' '}
                 <span className="text-[#1e3a5f]">expert financial advice</span>
               </h1>
-              <p className="text-lg text-slate-600 mb-8">
+              <p className="text-base lg:text-lg text-slate-600 mb-6 lg:mb-8">
                 Getting started is easy and complimentary.
               </p>
 
-              <Link href="/plan" className="inline-block bg-[#e5b94e] text-slate-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#d4a93d] transition-all">
+              <Link href="/plan" className="inline-block bg-[#e5b94e] text-slate-900 px-6 lg:px-8 py-3 lg:py-4 rounded-lg font-semibold text-base lg:text-lg hover:bg-[#d4a93d] transition-all">
                 Find my advisor
               </Link>
             </div>
 
-            {/* Couple line drawing - large, fading on edges */}
+            {/* Mobile illustration - right after content */}
+            <div className="lg:hidden flex justify-center mt-8">
+              <img
+                src="/couple-line-drawing.png"
+                alt="Couple reviewing financial plans"
+                className="w-full max-w-xs object-contain"
+              />
+            </div>
+
+            {/* Desktop couple line drawing - large, fading on edges */}
             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[55%] hidden lg:flex items-center justify-end pointer-events-none">
               <img
                 src="/couple-line-drawing.png"
@@ -61,7 +70,7 @@ export default function FindAdvisorPage() {
           </div>
         </div>
 
-        {/* Paper airplane trail - spans from header down to next section */}
+        {/* Paper airplane trail - spans from header down to next section (desktop only) */}
         <div
           className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 hidden lg:block z-10 pointer-events-none"
           style={{
@@ -74,15 +83,6 @@ export default function FindAdvisorPage() {
             alt=""
             className="h-full w-auto object-contain object-bottom"
             style={{ transform: 'scaleY(-1)' }}
-          />
-        </div>
-
-        {/* Mobile illustration */}
-        <div className="lg:hidden flex justify-center pb-8">
-          <img
-            src="/couple-line-drawing.png"
-            alt="Couple reviewing financial plans"
-            className="h-64 object-contain opacity-80"
           />
         </div>
       </section>
