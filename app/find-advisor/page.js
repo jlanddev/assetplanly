@@ -160,14 +160,14 @@ export default function FindAdvisorPage() {
 
       {/* Why Us */}
       <section id="why-us" className="py-24 px-6 bg-white relative">
-        {/* Paper airplane flying down-right, behind cards */}
+        {/* Paper airplane - large, from behind Right Fit card up to heading */}
         <img
           src="/paper-airplane-2.png"
           alt=""
-          className="absolute top-16 right-8 w-48 h-auto opacity-20 pointer-events-none hidden lg:block"
+          className="absolute top-0 right-0 w-96 h-auto opacity-40 pointer-events-none hidden lg:block"
           style={{
-            transform: 'scaleX(-1)',
-            zIndex: 0,
+            transform: 'scaleX(-1) translateX(20%) translateY(-10%)',
+            zIndex: 1,
           }}
         />
 
@@ -249,15 +249,15 @@ export default function FindAdvisorPage() {
           </Link>
         </div>
 
-        {/* Financial icons - distant at bottom, rising up */}
-        <div className="absolute -bottom-8 left-0 right-0 pointer-events-none overflow-hidden">
+        {/* Financial icons - stretched full width, rising from bottom */}
+        <div className="absolute bottom-0 left-0 right-0 pointer-events-none overflow-hidden">
           <img
             src="/financial-icons.png"
             alt=""
-            className="w-full h-auto opacity-10 translate-y-1/3"
+            className="w-[200%] max-w-none h-auto opacity-10 -translate-x-1/4 translate-y-1/4"
             style={{
-              maskImage: 'linear-gradient(to top, black 0%, transparent 60%)',
-              WebkitMaskImage: 'linear-gradient(to top, black 0%, transparent 60%)',
+              maskImage: 'linear-gradient(to top, black 0%, transparent 70%)',
+              WebkitMaskImage: 'linear-gradient(to top, black 0%, transparent 70%)',
             }}
           />
         </div>
