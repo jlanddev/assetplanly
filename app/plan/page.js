@@ -287,7 +287,7 @@ function PlanFlow() {
 
         <div className="py-4 px-6 bg-[#1e3a5f]">
           <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-8 text-sm text-white/80">
-            <span>Free Consultation</span>
+            <span>Complimentary Consultation</span>
             <span>•</span>
             <span>Personalized Plan</span>
             <span>•</span>
@@ -421,7 +421,7 @@ function PlanFlow() {
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                Free Consultation
+                Complimentary Consultation
               </span>
             </div>
           </div>
@@ -662,7 +662,7 @@ function PlanFlow() {
                     className="w-full py-4 rounded-xl font-semibold text-lg text-white transition-all disabled:opacity-50"
                     style={{ backgroundColor: brandColor }}
                   >
-                    {isSubmitting ? 'Scheduling...' : 'Schedule My Free Session'}
+                    {isSubmitting ? 'Scheduling...' : 'Schedule My Consultation'}
                   </button>
                 </div>
 
@@ -686,7 +686,7 @@ function PlanFlow() {
       {/* Footer */}
       <div className="py-4 px-6" style={{ backgroundColor: brandColor }}>
         <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-8 text-sm text-white/80">
-          <span>Free Consultation</span>
+          <span>Complimentary Consultation</span>
           <span>•</span>
           <span>Personalized Plan</span>
           <span>•</span>

@@ -32,17 +32,18 @@ export default function FindAdvisorPage() {
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
-              <p className="text-[#1e3a5f] font-semibold mb-6 tracking-wide uppercase text-sm">Expert Financial Guidance</p>
+              <p className="text-[#1e3a5f] font-semibold mb-6 tracking-wide uppercase text-sm">Concierge Fiduciary Service</p>
               <h1 className="text-4xl md:text-5xl lg:text-[52px] font-bold text-slate-900 leading-[1.15] mb-6">
-                You're in the right place for{' '}
-                <span className="text-[#1e3a5f]">expert financial advice</span>
+                Meet the right{' '}
+                <span className="text-[#1e3a5f]">fiduciary advisor</span>{' '}
+                for your goals
               </h1>
               <p className="text-xl text-slate-600 mb-8 leading-relaxed">
-                Getting started is easy, fast and free. Connect with a fiduciary advisor who puts your interests first.
+                We introduce you to a highly qualified fiduciary who specializes in your specific situation. Schedule a complimentary consultation to get started.
               </p>
 
               <Link href="/plan" className="inline-flex items-center gap-3 bg-[#e5b94e] text-slate-900 px-8 py-4 rounded-lg font-bold text-lg hover:bg-[#d4a93d] transition-all shadow-md hover:shadow-lg">
-                Get My Free Plan
+                Find My Advisor
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
@@ -69,8 +70,8 @@ export default function FindAdvisorPage() {
                     </svg>
                   </div>
                   <div>
-                    <div className="font-semibold text-slate-900">Fast</div>
-                    <div className="text-sm text-slate-500">2 minutes to start</div>
+                    <div className="font-semibold text-slate-900">Vetted</div>
+                    <div className="text-sm text-slate-500">Highly qualified</div>
                   </div>
                 </div>
 
@@ -81,8 +82,8 @@ export default function FindAdvisorPage() {
                     </svg>
                   </div>
                   <div>
-                    <div className="font-semibold text-slate-900">Free</div>
-                    <div className="text-sm text-slate-500">No cost to you</div>
+                    <div className="font-semibold text-slate-900">Matched</div>
+                    <div className="text-sm text-slate-500">Right fit for you</div>
                   </div>
                 </div>
               </div>
@@ -95,12 +96,12 @@ export default function FindAdvisorPage() {
                 <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
                   <div className="w-14 h-14 bg-[#1e3a5f] rounded-xl flex items-center justify-center">
                     <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900 text-lg">Your Complimentary Plan</h3>
-                    <p className="text-slate-500 text-sm">Personalized to your goals</p>
+                    <h3 className="font-bold text-slate-900 text-lg">Complimentary Consultation</h3>
+                    <p className="text-slate-500 text-sm">With the right advisor for you</p>
                   </div>
                 </div>
 
@@ -111,7 +112,7 @@ export default function FindAdvisorPage() {
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <span className="text-slate-700">Retirement planning analysis</span>
+                    <span className="text-slate-700">Introduction to a qualified fiduciary</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
@@ -119,7 +120,7 @@ export default function FindAdvisorPage() {
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <span className="text-slate-700">Investment strategy review</span>
+                    <span className="text-slate-700">Advisor matched to your situation</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
@@ -127,7 +128,7 @@ export default function FindAdvisorPage() {
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <span className="text-slate-700">Tax optimization strategies</span>
+                    <span className="text-slate-700">Complimentary planning meeting</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
@@ -135,12 +136,12 @@ export default function FindAdvisorPage() {
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <span className="text-slate-700">Estate planning guidance</span>
+                    <span className="text-slate-700">No obligation to proceed</span>
                   </div>
                 </div>
 
                 <Link href="/plan" className="block w-full bg-[#1e3a5f] text-white py-4 rounded-xl font-semibold text-center hover:bg-[#2d4a6f] transition-all">
-                  Get Started — It's Free
+                  Get Started
                 </Link>
                 <p className="text-center text-sm text-slate-400 mt-4">Takes less than 2 minutes</p>
               </div>
@@ -177,7 +178,7 @@ export default function FindAdvisorPage() {
             <p className="text-[#1e3a5f] font-semibold mb-3 tracking-wide uppercase text-sm">Simple Process</p>
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">How It Works</h2>
             <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Three simple steps to your complimentary financial plan
+              Three simple steps to meeting the right advisor
             </p>
           </div>
 
@@ -201,7 +202,7 @@ export default function FindAdvisorPage() {
               <div className="pt-4">
                 <h3 className="text-xl font-bold text-slate-900 mb-3">Meet Your Advisor</h3>
                 <p className="text-slate-600 leading-relaxed">
-                  We connect you with a fiduciary advisor who specializes in your specific needs.
+                  We introduce you to a fiduciary advisor who specializes in your specific needs.
                 </p>
               </div>
             </div>
@@ -211,9 +212,9 @@ export default function FindAdvisorPage() {
                 3
               </div>
               <div className="pt-4">
-                <h3 className="text-xl font-bold text-slate-900 mb-3">Get Your Plan</h3>
+                <h3 className="text-xl font-bold text-slate-900 mb-3">Schedule Your Meeting</h3>
                 <p className="text-slate-600 leading-relaxed">
-                  Receive a personalized financial plan and consultation — completely free.
+                  Book a complimentary consultation to discuss your goals — no obligation to proceed.
                 </p>
               </div>
             </div>
@@ -257,12 +258,12 @@ export default function FindAdvisorPage() {
             <div className="bg-[#faf9f7] rounded-2xl p-8 border border-slate-100">
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-5">
                 <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Completely Free</h3>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">Highly Qualified</h3>
               <p className="text-slate-600 leading-relaxed">
-                Your consultation and financial plan cost you nothing. We're compensated by our advisor network, never by you.
+                Our advisors are carefully vetted professionals with proven track records in comprehensive financial planning.
               </p>
             </div>
 
@@ -281,12 +282,12 @@ export default function FindAdvisorPage() {
             <div className="bg-[#faf9f7] rounded-2xl p-8 border border-slate-100">
               <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mb-5">
                 <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Fast Response</h3>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">Personalized Match</h3>
               <p className="text-slate-600 leading-relaxed">
-                Your advisor will reach out within 24 hours to schedule your complimentary consultation.
+                We match you with the advisor best suited to your specific situation, goals, and preferences.
               </p>
             </div>
           </div>
@@ -297,13 +298,13 @@ export default function FindAdvisorPage() {
       <section className="py-24 px-6 bg-[#1e3a5f]">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Ready for your complimentary<br />financial plan?
+            Ready to meet the right<br />advisor for you?
           </h2>
           <p className="text-xl text-white/70 mb-10">
-            Takes less than 2 minutes. No cost, no obligation.
+            Takes less than 2 minutes. No obligation.
           </p>
           <Link href="/plan" className="inline-flex items-center gap-3 bg-[#e5b94e] text-slate-900 px-10 py-5 rounded-lg font-bold text-lg hover:bg-[#d4a93d] transition-all shadow-lg">
-            Get My Free Plan
+            Find My Advisor
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
