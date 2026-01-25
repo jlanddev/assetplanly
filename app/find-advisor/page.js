@@ -28,48 +28,65 @@ export default function FindAdvisorPage() {
       </nav>
 
       {/* Hero */}
-      <section className="pt-12 pb-16 px-6 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="max-w-xl">
-              <h1 className="text-4xl md:text-5xl font-bold text-slate-900 leading-[1.1] mb-6">
-                You're in the right place for{' '}
-                <span className="text-[#1e3a5f]">expert financial advice</span>
-              </h1>
-              <p className="text-lg text-slate-600 mb-8">
-                Getting started is easy and complimentary.
-              </p>
+      <section className="relative bg-white overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 min-h-[600px]">
+            {/* Left - Content */}
+            <div className="flex items-center px-6 lg:px-16 py-16">
+              <div className="max-w-lg">
+                <h1 className="text-4xl md:text-5xl lg:text-[56px] font-bold text-slate-900 leading-[1.08] mb-6">
+                  You're in the right place for{' '}
+                  <span className="text-[#1e3a5f]">expert financial advice</span>
+                </h1>
+                <p className="text-lg text-slate-600 mb-8">
+                  Getting started is easy and complimentary.
+                </p>
 
-              <Link href="/plan" className="inline-block bg-[#e5b94e] text-slate-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#d4a93d] transition-all">
-                Find my advisor
-              </Link>
+                <Link href="/plan" className="inline-block bg-[#e5b94e] text-slate-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#d4a93d] transition-all">
+                  Find my advisor
+                </Link>
+              </div>
             </div>
 
-            {/* Circular hero image */}
-            <div className="flex justify-center lg:justify-end">
-              <div className="relative">
-                <div className="w-72 h-72 md:w-96 md:h-96 rounded-full overflow-hidden bg-slate-100">
-                  <img
-                    src="https://images.unsplash.com/photo-1556745753-b2904692b3cd?w=800&h=800&fit=crop&crop=faces"
-                    alt="Happy couple planning their financial future"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+            {/* Right - Image with curved mask */}
+            <div className="relative hidden lg:block">
+              <div
+                className="absolute inset-0"
+                style={{
+                  clipPath: 'ellipse(100% 100% at 100% 50%)',
+                }}
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1556745753-b2904692b3cd?w=1200&h=900&fit=crop&crop=faces"
+                  alt="Couple planning their financial future together"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
           </div>
         </div>
+
+        {/* Mobile image */}
+        <div className="lg:hidden px-6 pb-8">
+          <div className="rounded-2xl overflow-hidden">
+            <img
+              src="https://images.unsplash.com/photo-1556745753-b2904692b3cd?w=800&h=500&fit=crop&crop=faces"
+              alt="Couple planning their financial future together"
+              className="w-full h-64 object-cover"
+            />
+          </div>
+        </div>
       </section>
 
-      {/* As featured in */}
-      <section className="py-8 px-6 border-t border-slate-200">
+      {/* As featured in - flows from hero */}
+      <section className="py-6 px-6 bg-[#f5f3ef]">
         <div className="max-w-5xl mx-auto">
-          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-4">
+          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
             <span className="text-xs text-slate-400 uppercase tracking-wider">As featured in</span>
-            <span className="text-slate-400 font-serif text-xl italic">yahoo!<span className="text-xs not-italic">finance</span></span>
+            <span className="text-slate-400 font-serif text-xl italic">yahoo!<span className="text-xs not-italic align-top">finance</span></span>
             <span className="text-slate-400 font-serif text-xl">Kiplinger</span>
             <span className="text-slate-400 font-serif text-xl italic">MarketWatch</span>
-            <span className="text-slate-400 text-sm font-semibold tracking-tight">GOOD<br/><span className="font-normal">HOUSEKEEPING</span></span>
+            <span className="text-slate-400 text-xs font-semibold tracking-tight leading-tight">GOOD<br/>HOUSEKEEPING</span>
           </div>
         </div>
       </section>
