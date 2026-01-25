@@ -222,8 +222,8 @@ export default function FindAdvisorPage() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-24 px-6 bg-[#1e3a5f]">
-        <div className="max-w-3xl mx-auto text-center">
+      <section className="relative py-24 px-6 bg-[#1e3a5f] overflow-hidden">
+        <div className="max-w-3xl mx-auto text-center relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
             Ready to meet the right<br />advisor for you?
           </h2>
@@ -236,6 +236,21 @@ export default function FindAdvisorPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </Link>
+        </div>
+
+        {/* Financial icons - depth of field from bottom */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-48 pointer-events-none"
+          style={{
+            maskImage: 'linear-gradient(to top, black 0%, black 30%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to top, black 0%, black 30%, transparent 100%)',
+          }}
+        >
+          <img
+            src="/financial-icons.png"
+            alt=""
+            className="w-full h-auto object-cover object-top opacity-20"
+          />
         </div>
       </section>
 
