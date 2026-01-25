@@ -57,7 +57,7 @@ export default function FindAdvisorPage() {
                 }}
               >
                 <img
-                  src="https://images.unsplash.com/photo-1556745753-b2904692b3cd?w=1200&h=900&fit=crop&crop=faces"
+                  src="https://images.unsplash.com/photo-1592806088932-05058af0ad8d?w=1200&h=900&fit=crop"
                   alt="Couple planning their financial future together"
                   className="w-full h-full object-cover"
                 />
@@ -70,7 +70,7 @@ export default function FindAdvisorPage() {
         <div className="lg:hidden px-6 pb-8">
           <div className="rounded-2xl overflow-hidden">
             <img
-              src="https://images.unsplash.com/photo-1556745753-b2904692b3cd?w=800&h=500&fit=crop&crop=faces"
+              src="https://images.unsplash.com/photo-1592806088932-05058af0ad8d?w=800&h=500&fit=crop"
               alt="Couple planning their financial future together"
               className="w-full h-64 object-cover"
             />
@@ -96,7 +96,7 @@ export default function FindAdvisorPage() {
         {/* Image side */}
         <div className="bg-[#b8e0e0] min-h-[500px] lg:min-h-[600px] flex items-end justify-center">
           <img
-            src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=600&h=800&fit=crop&crop=top"
+            src="https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=600&h=800&fit=crop"
             alt="Woman planning finances"
             className="w-full max-w-md object-cover object-top"
           />
