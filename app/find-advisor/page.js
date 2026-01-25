@@ -63,7 +63,7 @@ export default function FindAdvisorPage() {
 
         {/* Paper airplane trail - spans from header down to next section */}
         <div
-          className="absolute right-24 top-0 bottom-0 hidden lg:block z-10 pointer-events-none"
+          className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 hidden lg:block z-10 pointer-events-none"
           style={{
             maskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 100%)',
             WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 100%)',
