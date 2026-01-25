@@ -2,24 +2,15 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import Link from "next/link";
-import Image from "next/image";
 
 function MatchFlow() {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [matchedAdvisor, setMatchedAdvisor] = useState(null);
-  const [isMatching, setIsMatching] = useState(false);
+  const [advisor, setAdvisor] = useState(null);
   const [error, setError] = useState('');
-  const [brandingAdvisor, setBrandingAdvisor] = useState(null);
-
-  useEffect(() => {
-    fetch('/api/match', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
-      .then(r => r.json()).then(d => d.advisor && setBrandingAdvisor(d.advisor)).catch(() => {});
-  }, []);
 
   const [formData, setFormData] = useState({
-    // Quiz answers
     income: '',
     retireTimeline: '',
     ownsHome: '',
@@ -27,7 +18,6 @@ function MatchFlow() {
     portfolioSize: '',
     hasAdvisor: '',
     localPreference: '',
-    // Contact info
     firstName: '',
     lastName: '',
     email: '',
@@ -35,12 +25,18 @@ function MatchFlow() {
     zipCode: ''
   });
 
-  const totalSteps = 9;
+  // Pre-load advisor branding
+  useEffect(() => {
+    fetch('/api/match', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+      .then(r => r.json()).then(d => d.advisor && setAdvisor(d.advisor)).catch(() => {});
+  }, []);
+
+  const primaryColor = advisor?.primary_color || '#1e3a5f';
+  const secondaryColor = advisor?.secondary_color || '#c9a227';
 
   const handleSelect = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Auto-advance after selection
-    setTimeout(() => setCurrentStep(prev => prev + 1), 300);
+    setTimeout(() => setCurrentStep(prev => prev + 1), 250);
   };
 
   const handleChange = (e) => {
@@ -53,33 +49,6 @@ function MatchFlow() {
     if (phone.length < 4) return phone;
     if (phone.length < 7) return `(${phone.slice(0, 3)}) ${phone.slice(3)}`;
     return `(${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 10)}`;
-  };
-
-  const handlePhoneChange = (e) => {
-    setFormData(prev => ({ ...prev, phone: formatPhone(e.target.value) }));
-  };
-
-  const handleBack = () => {
-    if (currentStep > 1) setCurrentStep(prev => prev - 1);
-  };
-
-  const findMatch = async () => {
-    setIsMatching(true);
-    try {
-      const response = await fetch('/api/match', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      const data = await response.json();
-      if (data.advisor) {
-        setMatchedAdvisor(data.advisor);
-      }
-    } catch (err) {
-      console.error('Error finding match:', err);
-    }
-    setIsMatching(false);
-    setCurrentStep(currentStep + 1);
   };
 
   const handleSubmit = async (e) => {
@@ -103,8 +72,8 @@ function MatchFlow() {
           portfolioSize: formData.portfolioSize,
           hasAdvisor: formData.hasAdvisor,
           localPreference: formData.localPreference,
-          matchedAdvisorId: matchedAdvisor?.id,
-          source: 'consumer_match'
+          matchedAdvisorId: advisor?.id,
+          source: 'concierge'
         }),
       });
 
@@ -118,56 +87,122 @@ function MatchFlow() {
     }
   };
 
-  const displayAdvisor = matchedAdvisor || brandingAdvisor;
-  const primaryColor = displayAdvisor?.primary_color || '#1e3a5f';
-  const secondaryColor = displayAdvisor?.secondary_color || '#22c55e';
-
-  // Success screen
-  if (isSubmitted) {
+  // Landing / Intro
+  if (currentStep === 0) {
     return (
-      <div className="min-h-screen bg-[#f8fafc] flex flex-col">
-        <nav className="bg-white border-b border-gray-200 px-6 py-4">
-          <div className="max-w-4xl mx-auto">
-            {matchedAdvisor?.logo_url ? (
-              <img src={matchedAdvisor.logo_url} alt="" className="h-8 w-auto" />
+      <div className="min-h-screen flex flex-col" style={{ backgroundColor: primaryColor }}>
+        <nav className="px-8 py-6">
+          <div className="max-w-6xl mx-auto flex justify-between items-center">
+            {advisor?.logo_url ? (
+              <img src={advisor.logo_url} alt="" className="h-10 brightness-0 invert" />
             ) : (
-              <Image src="/logo.png" alt="AssetPlanly" width={150} height={36} className="h-8 w-auto" />
+              <span className="text-2xl font-bold text-white">AssetPlanly</span>
             )}
           </div>
         </nav>
 
-        <div className="flex-1 flex items-center justify-center p-6">
+        <div className="flex-1 flex items-center justify-center px-6 py-12">
+          <div className="max-w-3xl text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white/90 text-sm mb-8">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              Concierge Fiduciary Service
+            </div>
+
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+              Your Complimentary<br />Financial Plan Awaits
+            </h1>
+
+            <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">
+              Answer a few questions and receive a personalized financial plan from a dedicated fiduciary advisor — completely free, no obligation.
+            </p>
+
+            <button
+              onClick={() => setCurrentStep(1)}
+              className="inline-flex items-center gap-3 px-10 py-5 rounded-2xl text-lg font-semibold transition-all hover:scale-105"
+              style={{ backgroundColor: secondaryColor, color: '#fff' }}
+            >
+              Start My Free Plan
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </button>
+
+            <div className="flex flex-wrap justify-center gap-8 mt-16 text-white/70 text-sm">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                100% Confidential
+              </div>
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                Fee-Free Fiduciary
+              </div>
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                2-Minute Process
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Success screen
+  if (isSubmitted) {
+    return (
+      <div className="min-h-screen flex flex-col" style={{ backgroundColor: primaryColor }}>
+        <nav className="px-8 py-6">
+          {advisor?.logo_url ? (
+            <img src={advisor.logo_url} alt="" className="h-10 brightness-0 invert" />
+          ) : (
+            <span className="text-2xl font-bold text-white">AssetPlanly</span>
+          )}
+        </nav>
+
+        <div className="flex-1 flex items-center justify-center px-6">
           <div className="max-w-lg text-center">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-8">
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">You&apos;re All Set!</h1>
-            <p className="text-lg text-gray-600 mb-8">
-              {matchedAdvisor
-                ? `${matchedAdvisor.name} will reach out to you shortly to schedule your free consultation.`
-                : 'A vetted financial advisor will reach out to you shortly to schedule your free consultation.'}
+
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Your Plan is Being Prepared
+            </h1>
+
+            <p className="text-lg text-white/80 mb-8">
+              {advisor?.name || 'Your dedicated advisor'} will contact you within 24 hours to review your personalized financial plan.
             </p>
-            {matchedAdvisor && (
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-8">
+
+            {advisor && (
+              <div className="bg-white/10 backdrop-blur rounded-2xl p-6 mb-8">
                 <div className="flex items-center gap-4">
-                  {matchedAdvisor.photo_url ? (
-                    <img src={matchedAdvisor.photo_url} alt="" className="w-16 h-16 rounded-full object-cover" />
+                  {advisor.photo_url ? (
+                    <img src={advisor.photo_url} alt="" className="w-16 h-16 rounded-full object-cover" />
                   ) : (
-                    <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xl font-bold">
-                      {matchedAdvisor.name?.charAt(0)}
+                    <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-white text-2xl font-bold">
+                      {advisor.name?.charAt(0)}
                     </div>
                   )}
                   <div className="text-left">
-                    <div className="font-semibold text-gray-900">{matchedAdvisor.name}</div>
-                    <div className="text-gray-600 text-sm">{matchedAdvisor.firm_name}</div>
+                    <div className="font-semibold text-white text-lg">{advisor.name}</div>
+                    <div className="text-white/70">{advisor.firm_name}</div>
                   </div>
                 </div>
               </div>
             )}
-            <Link href="/find-advisor" className="text-blue-600 hover:text-blue-700 font-medium">
-              ← Back to Home
+
+            <Link href="/" className="text-white/70 hover:text-white transition">
+              Return Home
             </Link>
           </div>
         </div>
@@ -175,461 +210,241 @@ function MatchFlow() {
     );
   }
 
+  const questions = [
+    {
+      key: 'portfolioSize',
+      title: 'What are your total investable assets?',
+      subtitle: 'Include retirement accounts, savings, and investments',
+      options: [
+        { value: 'under-100k', label: 'Under $100K' },
+        { value: '100k-250k', label: '$100K - $250K' },
+        { value: '250k-500k', label: '$250K - $500K' },
+        { value: '500k-1m', label: '$500K - $1M' },
+        { value: '1m-5m', label: '$1M - $5M' },
+        { value: '5m+', label: '$5M+' },
+      ]
+    },
+    {
+      key: 'retireTimeline',
+      title: 'When do you plan to retire?',
+      subtitle: 'Or when did you retire?',
+      options: [
+        { value: '1-5', label: 'Within 5 years' },
+        { value: '5-10', label: '5-10 years' },
+        { value: '10+', label: '10+ years' },
+        { value: 'retired', label: 'Already retired' },
+      ]
+    },
+    {
+      key: 'income',
+      title: 'What is your household income?',
+      subtitle: 'Annual pre-tax income',
+      options: [
+        { value: 'under-75k', label: 'Under $75K' },
+        { value: '75k-150k', label: '$75K - $150K' },
+        { value: '150k-250k', label: '$150K - $250K' },
+        { value: '250k-500k', label: '$250K - $500K' },
+        { value: '500k+', label: '$500K+' },
+      ]
+    },
+    {
+      key: 'hasAdvisor',
+      title: 'Do you currently work with a financial advisor?',
+      options: [
+        { value: 'yes', label: 'Yes, I have an advisor' },
+        { value: 'no', label: 'No, not currently' },
+        { value: 'looking', label: 'Looking to switch' },
+      ]
+    },
+    {
+      key: 'ownsHome',
+      title: 'Do you own your home?',
+      options: [
+        { value: 'yes', label: 'Yes' },
+        { value: 'no', label: 'No' },
+      ]
+    },
+  ];
+
+  const totalSteps = questions.length + 1; // +1 for contact form
+  const currentQuestion = questions[currentStep - 1];
+  const isContactStep = currentStep > questions.length;
+
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header */}
-      <nav className="bg-white border-b border-gray-200 px-6 py-4">
+      <nav className="bg-white border-b border-gray-100 px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <Link href="/find-advisor">
-            {displayAdvisor?.logo_url ? (
-              <img src={displayAdvisor.logo_url} alt={displayAdvisor.firm_name || ''} className="h-8 w-auto" />
-            ) : (
-              <Image src="/logo.png" alt="AssetPlanly" width={150} height={36} className="h-8 w-auto" />
-            )}
-          </Link>
-          <div className="text-sm text-gray-500">
-            Step {currentStep} of {totalSteps}
+          {advisor?.logo_url ? (
+            <img src={advisor.logo_url} alt="" className="h-8" />
+          ) : (
+            <span className="text-xl font-bold" style={{ color: primaryColor }}>AssetPlanly</span>
+          )}
+          <div className="text-sm text-gray-400">
+            {currentStep} of {totalSteps}
           </div>
         </div>
       </nav>
 
-      {/* Progress bar */}
-      <div className="bg-white border-b border-gray-100">
-        <div className="max-w-4xl mx-auto">
-          <div className="h-1 bg-gray-200">
-            <div
-              className="h-1 transition-all duration-500"
-              style={{ width: `${(currentStep / totalSteps) * 100}%`, backgroundColor: primaryColor }}
-            />
-          </div>
-        </div>
+      {/* Progress */}
+      <div className="h-1 bg-gray-200">
+        <div
+          className="h-1 transition-all duration-500"
+          style={{ width: `${(currentStep / totalSteps) * 100}%`, backgroundColor: primaryColor }}
+        />
       </div>
 
-      {/* Main content */}
-      <div className="flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-2xl">
+      {/* Content */}
+      <div className="flex-1 flex items-center justify-center px-6 py-12">
+        <div className="w-full max-w-xl">
 
-          {/* Step 1: Income */}
-          {currentStep === 1 && (
+          {/* Question Steps */}
+          {currentQuestion && (
             <div className="animate-fadeIn">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-2">
-                My current household income:
+                {currentQuestion.title}
               </h2>
-              <p className="text-gray-500 text-center mb-8">Select one</p>
+              {currentQuestion.subtitle && (
+                <p className="text-gray-500 text-center mb-10">{currentQuestion.subtitle}</p>
+              )}
 
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {[
-                  { value: 'under-40k', label: 'LESS THAN', sublabel: '$40,000' },
-                  { value: '40k-75k', label: '$40,000 to', sublabel: '$74,999' },
-                  { value: '75k-100k', label: '$75,000 to', sublabel: '$99,999' },
-                  { value: '100k-150k', label: '$100,000 to', sublabel: '$149,999' },
-                  { value: '150k-250k', label: '$150,000 to', sublabel: '$249,999' },
-                  { value: '250k+', label: 'MORE THAN', sublabel: '$250,000' },
-                ].map((opt) => (
+              <div className="space-y-3">
+                {currentQuestion.options.map((opt) => (
                   <button
                     key={opt.value}
-                    onClick={() => handleSelect('income', opt.value)}
-                    className={`p-6 rounded-xl border-2 transition-all hover:border-blue-500 hover:shadow-md ${
-                      formData.income === opt.value
-                        ? 'border-current bg-opacity-10'
-                        : 'border-gray-200 bg-white'
-                    }`}
+                    onClick={() => handleSelect(currentQuestion.key, opt.value)}
+                    className="w-full p-5 rounded-xl border-2 transition-all hover:shadow-md text-left flex items-center justify-between group"
+                    style={{
+                      borderColor: formData[currentQuestion.key] === opt.value ? primaryColor : '#e5e7eb',
+                      backgroundColor: formData[currentQuestion.key] === opt.value ? `${primaryColor}08` : '#fff'
+                    }}
                   >
-                    <div className="text-xs text-gray-500 uppercase tracking-wide">{opt.label}</div>
-                    <div className="text-lg font-bold text-gray-900">{opt.sublabel}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Step 2: Retirement Timeline */}
-          {currentStep === 2 && (
-            <div className="animate-fadeIn">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-2">
-                I would like to retire in:
-              </h2>
-              <p className="text-gray-500 text-center mb-8">Select one</p>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {[
-                  { value: '1-5', label: '1-5 YRS' },
-                  { value: '5-10', label: '5-10 YRS' },
-                  { value: '10+', label: '10+ YRS' },
-                  { value: 'retired', label: 'RETIRED' },
-                ].map((opt) => (
-                  <button
-                    key={opt.value}
-                    onClick={() => handleSelect('retireTimeline', opt.value)}
-                    className={`p-6 rounded-xl border-2 transition-all hover:border-blue-500 hover:shadow-md ${
-                      formData.retireTimeline === opt.value
-                        ? 'border-current bg-opacity-10'
-                        : 'border-gray-200 bg-white'
-                    }`}
-                  >
-                    <div className="text-lg font-bold text-gray-900">{opt.label}</div>
+                    <span className="text-lg font-medium text-gray-900">{opt.label}</span>
+                    <svg className="w-5 h-5 text-gray-300 group-hover:text-gray-500 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                   </button>
                 ))}
               </div>
 
-              <button onClick={handleBack} className="mt-8 text-gray-500 hover:text-gray-700 font-medium mx-auto block">
-                ← Back
-              </button>
+              {currentStep > 1 && (
+                <button
+                  onClick={() => setCurrentStep(prev => prev - 1)}
+                  className="mt-8 text-gray-400 hover:text-gray-600 font-medium mx-auto block"
+                >
+                  ← Back
+                </button>
+              )}
             </div>
           )}
 
-          {/* Step 3: Own a home */}
-          {currentStep === 3 && (
+          {/* Contact Form */}
+          {isContactStep && (
             <div className="animate-fadeIn">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-2">
-                I own a home:
-              </h2>
-              <p className="text-gray-500 text-center mb-8">Select one</p>
-
-              <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-                {[
-                  { value: 'yes', label: 'YES' },
-                  { value: 'no', label: 'NO' },
-                ].map((opt) => (
-                  <button
-                    key={opt.value}
-                    onClick={() => handleSelect('ownsHome', opt.value)}
-                    className={`p-8 rounded-xl border-2 transition-all hover:border-blue-500 hover:shadow-md ${
-                      formData.ownsHome === opt.value
-                        ? 'border-current bg-opacity-10'
-                        : 'border-gray-200 bg-white'
-                    }`}
-                  >
-                    <div className="text-xl font-bold text-gray-900">{opt.label}</div>
-                  </button>
-                ))}
-              </div>
-
-              <button onClick={handleBack} className="mt-8 text-gray-500 hover:text-gray-700 font-medium mx-auto block">
-                ← Back
-              </button>
-            </div>
-          )}
-
-          {/* Step 4: Own a business */}
-          {currentStep === 4 && (
-            <div className="animate-fadeIn">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-2">
-                I own a business:
-              </h2>
-              <p className="text-gray-500 text-center mb-8">Select one</p>
-
-              <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-                {[
-                  { value: 'yes', label: 'YES' },
-                  { value: 'no', label: 'NO' },
-                ].map((opt) => (
-                  <button
-                    key={opt.value}
-                    onClick={() => handleSelect('ownsBusiness', opt.value)}
-                    className={`p-8 rounded-xl border-2 transition-all hover:border-blue-500 hover:shadow-md ${
-                      formData.ownsBusiness === opt.value
-                        ? 'border-current bg-opacity-10'
-                        : 'border-gray-200 bg-white'
-                    }`}
-                  >
-                    <div className="text-xl font-bold text-gray-900">{opt.label}</div>
-                  </button>
-                ))}
-              </div>
-
-              <button onClick={handleBack} className="mt-8 text-gray-500 hover:text-gray-700 font-medium mx-auto block">
-                ← Back
-              </button>
-            </div>
-          )}
-
-          {/* Step 5: Portfolio Size */}
-          {currentStep === 5 && (
-            <div className="animate-fadeIn">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-2">
-                My investable assets are:
-              </h2>
-              <p className="text-gray-500 text-center mb-8">Include 401(k), IRA, savings, investments (not your home)</p>
-
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {[
-                  { value: 'under-100k', label: 'LESS THAN', sublabel: '$100,000' },
-                  { value: '100k-250k', label: '$100,000 to', sublabel: '$249,999' },
-                  { value: '250k-500k', label: '$250,000 to', sublabel: '$499,999' },
-                  { value: '500k-1m', label: '$500,000 to', sublabel: '$999,999' },
-                  { value: '1m-5m', label: '$1M to', sublabel: '$5M' },
-                  { value: '5m+', label: 'MORE THAN', sublabel: '$5M' },
-                ].map((opt) => (
-                  <button
-                    key={opt.value}
-                    onClick={() => handleSelect('portfolioSize', opt.value)}
-                    className={`p-6 rounded-xl border-2 transition-all hover:border-blue-500 hover:shadow-md ${
-                      formData.portfolioSize === opt.value
-                        ? 'border-current bg-opacity-10'
-                        : 'border-gray-200 bg-white'
-                    }`}
-                  >
-                    <div className="text-xs text-gray-500 uppercase tracking-wide">{opt.label}</div>
-                    <div className="text-lg font-bold text-gray-900">{opt.sublabel}</div>
-                  </button>
-                ))}
-              </div>
-
-              <button onClick={handleBack} className="mt-8 text-gray-500 hover:text-gray-700 font-medium mx-auto block">
-                ← Back
-              </button>
-            </div>
-          )}
-
-          {/* Step 6: Has Advisor */}
-          {currentStep === 6 && (
-            <div className="animate-fadeIn">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-2">
-                Do you currently have a financial advisor?
-              </h2>
-              <p className="text-gray-500 text-center mb-8">Select one</p>
-
-              <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-                {[
-                  { value: 'yes', label: 'YES' },
-                  { value: 'no', label: 'NO' },
-                ].map((opt) => (
-                  <button
-                    key={opt.value}
-                    onClick={() => handleSelect('hasAdvisor', opt.value)}
-                    className={`p-8 rounded-xl border-2 transition-all hover:border-blue-500 hover:shadow-md ${
-                      formData.hasAdvisor === opt.value
-                        ? 'border-current bg-opacity-10'
-                        : 'border-gray-200 bg-white'
-                    }`}
-                  >
-                    <div className="text-xl font-bold text-gray-900">{opt.label}</div>
-                  </button>
-                ))}
-              </div>
-
-              <button onClick={handleBack} className="mt-8 text-gray-500 hover:text-gray-700 font-medium mx-auto block">
-                ← Back
-              </button>
-            </div>
-          )}
-
-          {/* Step 7: Local Preference */}
-          {currentStep === 7 && (
-            <div className="animate-fadeIn">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-2">
-                Does your advisor need to be local?
-              </h2>
-              <p className="text-gray-500 text-center mb-8 max-w-md mx-auto">
-                Note: All advisors can work via phone or video conferencing.
-              </p>
-
-              <div className="grid gap-3 max-w-lg mx-auto">
-                {[
-                  { value: 'local', label: 'YES, I NEED', sublabel: 'A LOCAL ADVISOR' },
-                  { value: 'best-match', label: 'NON-LOCAL OK', sublabel: 'IF BEST MATCH FOR ME' },
-                  { value: 'no-preference', label: 'NO PREFERENCE', sublabel: '' },
-                ].map((opt) => (
-                  <button
-                    key={opt.value}
-                    onClick={() => handleSelect('localPreference', opt.value)}
-                    className={`p-6 rounded-xl border-2 transition-all hover:border-blue-500 hover:shadow-md text-left ${
-                      formData.localPreference === opt.value
-                        ? 'border-current bg-opacity-10'
-                        : 'border-gray-200 bg-white'
-                    }`}
-                  >
-                    <div className="text-sm text-gray-500 uppercase tracking-wide">{opt.label}</div>
-                    {opt.sublabel && <div className="text-lg font-bold text-gray-900">{opt.sublabel}</div>}
-                  </button>
-                ))}
-              </div>
-
-              <button onClick={handleBack} className="mt-8 text-gray-500 hover:text-gray-700 font-medium mx-auto block">
-                ← Back
-              </button>
-            </div>
-          )}
-
-          {/* Step 8: Contact Info */}
-          {currentStep === 8 && (
-            <div className="animate-fadeIn">
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <div className="text-center mb-10">
+                <div className="w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center" style={{ backgroundColor: `${primaryColor}15` }}>
+                  <svg className="w-8 h-8" style={{ color: primaryColor }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-                  Schedule Your Complimentary Review
+                  Almost Done!
                 </h2>
-                <p className="text-gray-500 max-w-md mx-auto">
-                  Enter your info below to schedule your free consultation with a vetted financial advisor.
+                <p className="text-gray-500">
+                  Enter your details to receive your complimentary financial plan.
                 </p>
               </div>
 
-              <div className="bg-white rounded-xl p-6 md:p-8 shadow-sm border border-gray-100 max-w-md mx-auto">
-                <div className="space-y-4">
+              <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+                <div className="space-y-5">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
                       <input
                         type="text"
                         name="firstName"
                         value={formData.firstName}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                        placeholder="John"
+                        required
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:border-transparent outline-none"
+                        style={{ '--tw-ring-color': primaryColor }}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
                       <input
                         type="text"
                         name="lastName"
                         value={formData.lastName}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                        placeholder="Smith"
+                        required
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:border-transparent outline-none"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
                     <input
                       type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                      placeholder="john@example.com"
+                      required
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:border-transparent outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
                     <input
                       type="tel"
                       name="phone"
                       value={formData.phone}
-                      onChange={handlePhoneChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                      onChange={(e) => setFormData(prev => ({ ...prev, phone: formatPhone(e.target.value) }))}
+                      required
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:border-transparent outline-none"
                       placeholder="(555) 123-4567"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">ZIP Code</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">ZIP Code</label>
                     <input
                       type="text"
                       name="zipCode"
                       value={formData.zipCode}
                       onChange={handleChange}
                       maxLength={5}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                      placeholder="90210"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:border-transparent outline-none"
                     />
                   </div>
 
+                  {error && (
+                    <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+                      {error}
+                    </div>
+                  )}
+
                   <button
-                    onClick={findMatch}
-                    disabled={!formData.firstName || !formData.lastName || !formData.email || !formData.phone || isMatching}
-                    className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-4 rounded-lg font-semibold text-lg transition-colors mt-4"
+                    type="submit"
+                    disabled={isSubmitting || !formData.firstName || !formData.email || !formData.phone}
+                    className="w-full py-4 rounded-xl font-semibold text-lg text-white transition-all disabled:opacity-50"
+                    style={{ backgroundColor: primaryColor }}
                   >
-                    {isMatching ? 'Scheduling...' : 'Schedule My Free Review →'}
+                    {isSubmitting ? 'Preparing Your Plan...' : 'Get My Free Plan'}
                   </button>
                 </div>
 
-                <p className="text-xs text-gray-500 text-center mt-4">
-                  By clicking above, you agree to our <Link href="/terms" className="underline">Terms</Link> and <Link href="/privacy" className="underline">Privacy Policy</Link>.
+                <p className="text-xs text-gray-400 text-center mt-6">
+                  By submitting, you agree to our <Link href="/terms" className="underline">Terms</Link> and <Link href="/privacy" className="underline">Privacy Policy</Link>.
                 </p>
-              </div>
+              </form>
 
-              <button onClick={handleBack} className="mt-6 text-gray-500 hover:text-gray-700 font-medium mx-auto block">
-                ← Back
-              </button>
-            </div>
-          )}
-
-          {/* Step 9: Results / Matched Advisor */}
-          {currentStep === 9 && (
-            <div className="animate-fadeIn">
-              {matchedAdvisor ? (
-                <>
-                  <div className="text-center mb-8">
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-                      Your Complimentary Review
-                    </h2>
-                    <p className="text-gray-500">
-                      You&apos;ve been connected with:
-                    </p>
-                  </div>
-
-                  <div
-                    className="rounded-2xl p-8 text-center mb-6"
-                    style={{ backgroundColor: primaryColor }}
-                  >
-                    {matchedAdvisor.logo_url && (
-                      <img src={matchedAdvisor.logo_url} alt="" className="h-10 mx-auto mb-6 brightness-0 invert" />
-                    )}
-
-                    {matchedAdvisor.photo_url ? (
-                      <img src={matchedAdvisor.photo_url} alt="" className="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-4 border-white/30" />
-                    ) : (
-                      <div className="w-24 h-24 rounded-full bg-white/20 mx-auto mb-4 flex items-center justify-center text-white text-3xl font-bold">
-                        {matchedAdvisor.name?.charAt(0)}
-                      </div>
-                    )}
-
-                    <h3 className="text-2xl font-bold text-white">{matchedAdvisor.name}</h3>
-                    <p className="text-white/80 mb-4">{matchedAdvisor.firm_name}</p>
-
-                    {matchedAdvisor.bio && (
-                      <p className="text-white/70 text-sm max-w-sm mx-auto mb-6">
-                        {matchedAdvisor.bio}
-                      </p>
-                    )}
-
-                    <button
-                      onClick={handleSubmit}
-                      disabled={isSubmitting}
-                      className="w-full max-w-xs mx-auto block py-4 rounded-xl font-semibold text-lg transition-all disabled:opacity-50"
-                      style={{ backgroundColor: secondaryColor, color: '#fff' }}
-                    >
-                      {isSubmitting ? 'Submitting...' : 'Request Free Consultation'}
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="text-center mb-8">
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-                      Thanks! We&apos;re finding your match.
-                    </h2>
-                    <p className="text-gray-500 mb-6">
-                      Click below to complete your request and a vetted advisor will reach out shortly.
-                    </p>
-
-                    {error && (
-                      <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-                        {error}
-                      </div>
-                    )}
-
-                    <button
-                      onClick={handleSubmit}
-                      disabled={isSubmitting}
-                      className="bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-colors"
-                    >
-                      {isSubmitting ? 'Submitting...' : 'Complete My Request →'}
-                    </button>
-                  </div>
-                </>
-              )}
-
-              <button onClick={handleBack} className="mt-6 text-gray-500 hover:text-gray-700 font-medium mx-auto block">
+              <button
+                onClick={() => setCurrentStep(questions.length)}
+                className="mt-6 text-gray-400 hover:text-gray-600 font-medium mx-auto block"
+              >
                 ← Back
               </button>
             </div>
@@ -638,27 +453,14 @@ function MatchFlow() {
         </div>
       </div>
 
-      {/* Trust footer */}
-      <div className="bg-white border-t border-gray-200 py-4 px-6">
-        <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-6 text-sm text-gray-500">
-          <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            100% Free Service
-          </div>
-          <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            Vetted Advisors
-          </div>
-          <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            No Spam Calls
-          </div>
+      {/* Footer */}
+      <div className="py-4 px-6" style={{ backgroundColor: primaryColor }}>
+        <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-8 text-sm text-white/80">
+          <span>Free Consultation</span>
+          <span>•</span>
+          <span>Personalized Plan</span>
+          <span>•</span>
+          <span>No Obligation</span>
         </div>
       </div>
 
@@ -678,8 +480,8 @@ function MatchFlow() {
 export default function MatchPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center">
-        <div className="text-gray-500">Loading...</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-400">Loading...</div>
       </div>
     }>
       <MatchFlow />
