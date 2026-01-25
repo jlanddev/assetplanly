@@ -120,8 +120,8 @@ export default function FindAdvisorPage() {
           <div className="absolute bottom-20 left-10 w-3 h-3 bg-white/40 rounded-full" />
 
           <img
-            src="https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=600&h=800&fit=crop"
-            alt="Woman planning finances"
+            src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=800&fit=crop&crop=faces"
+            alt="Mature couple reviewing financial plans"
             className="w-full max-w-md object-cover object-top"
           />
         </div>
