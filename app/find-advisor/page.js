@@ -315,7 +315,7 @@ export default function FindAdvisorPage() {
       <footer className="bg-slate-900 text-slate-400 py-12 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <Image src="/logo.png" alt="AssetPlanly" width={140} height={34} className="h-8 w-auto brightness-0 invert opacity-60" />
+            <Image src="/logo.png" alt="AssetPlanly" width={140} height={34} className="h-8 w-auto" />
             <div className="flex gap-8 text-sm">
               <Link href="/privacy" className="hover:text-white transition">Privacy Policy</Link>
               <Link href="/terms" className="hover:text-white transition">Terms of Service</Link>
