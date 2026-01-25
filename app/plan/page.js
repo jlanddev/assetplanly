@@ -436,7 +436,7 @@ function PlanFlow() {
       <div className="min-h-screen flex flex-col" style={{ backgroundColor: primaryColor }}>
         <nav className="px-8 py-6">
           {advisor?.logo_url ? (
-            <img src={advisor.logo_url} alt="" className="h-10" />
+            <img src={advisor.logo_url} alt="" className="max-h-16 max-w-[200px] object-contain" />
           ) : (
             <span className="text-2xl font-bold text-white">{advisor?.firm_name || 'AssetPlanly'}</span>
           )}
@@ -495,7 +495,7 @@ function PlanFlow() {
       <nav className="bg-white border-b border-gray-100 px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           {usesAdvisorBranding && advisor?.logo_url ? (
-            <img src={advisor.logo_url} alt="" className="h-8" />
+            <img src={advisor.logo_url} alt="" className="max-h-12 max-w-[180px] object-contain" />
           ) : (
             <Image src="/logo.png" alt="AssetPlanly" width={150} height={36} className="h-8 w-auto" />
           )}

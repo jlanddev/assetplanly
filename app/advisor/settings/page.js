@@ -301,7 +301,7 @@ export default function AdvisorSettings() {
                     className="border-2 border-dashed border-[#334155] rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 transition"
                   >
                     {formData.logo_url ? (
-                      <img src={formData.logo_url} alt="Logo" className="max-h-20 mx-auto" />
+                      <img src={formData.logo_url} alt="Logo" className="max-h-20 max-w-[250px] object-contain mx-auto" />
                     ) : (
                       <div className="text-[#64748b]">
                         <svg className="w-10 h-10 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -555,7 +555,7 @@ export default function AdvisorSettings() {
                 style={{ backgroundColor: formData.primary_color }}
               >
                 {formData.logo_url ? (
-                  <img src={formData.logo_url} alt="Logo" className="max-h-12 mx-auto mb-4" />
+                  <img src={formData.logo_url} alt="Logo" className="max-h-14 max-w-[200px] object-contain mx-auto mb-4" />
                 ) : (
                   <div className="text-white/50 text-sm mb-4">[Your Logo]</div>
                 )}
