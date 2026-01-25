@@ -44,6 +44,7 @@ export async function PATCH(request) {
       email,
       phone,
       firm_name,
+      website_url,
       bio,
       logo_url,
       photo_url,
@@ -73,6 +74,7 @@ export async function PATCH(request) {
     if (email !== undefined) updates.email = email;
     if (phone !== undefined) updates.phone = phone;
     if (firm_name !== undefined) updates.firm_name = firm_name;
+    if (website_url !== undefined) updates.website_url = website_url;
     if (bio !== undefined) updates.bio = bio;
     if (logo_url !== undefined) updates.logo_url = logo_url;
     if (photo_url !== undefined) updates.photo_url = photo_url;

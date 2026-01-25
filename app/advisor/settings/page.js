@@ -19,6 +19,7 @@ export default function AdvisorSettings() {
     email: '',
     phone: '',
     firm_name: '',
+    website_url: '',
     bio: '',
     logo_url: '',
     photo_url: '',
@@ -86,6 +87,7 @@ export default function AdvisorSettings() {
           email: data.email || '',
           phone: data.phone || '',
           firm_name: data.firm_name || '',
+          website_url: data.website_url || '',
           bio: data.bio || '',
           logo_url: data.logo_url || '',
           photo_url: data.photo_url || '',
@@ -271,6 +273,17 @@ export default function AdvisorSettings() {
                     className="w-full bg-[#0f172a] border border-[#334155] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
                   />
                 </div>
+              </div>
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-[#94a3b8] mb-2">Website URL</label>
+                <input
+                  type="url"
+                  name="website_url"
+                  value={formData.website_url}
+                  onChange={handleChange}
+                  placeholder="https://yourfirm.com"
+                  className="w-full bg-[#0f172a] border border-[#334155] rounded-lg px-4 py-3 text-white placeholder-[#64748b] focus:outline-none focus:border-blue-500"
+                />
               </div>
               <div className="mt-4">
                 <label className="block text-sm font-medium text-[#94a3b8] mb-2">Bio</label>

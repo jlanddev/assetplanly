@@ -469,16 +469,25 @@ function PlanFlow() {
                     </div>
                   )}
                   <div className="text-left">
-                    <div className="font-semibold text-white text-lg">{advisor.name}</div>
+                    <div className="font-semibold text-white text-lg">
+                      {advisor.name}
+                    </div>
                     <div className="text-white/70">{advisor.firm_name}</div>
                   </div>
                 </div>
               </div>
             )}
 
-            <Link href="/" className="text-white/70 hover:text-white transition">
-              Return Home
-            </Link>
+            {advisor?.website_url && (
+              <a
+                href={advisor.website_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xl text-white underline hover:text-white/80 transition"
+              >
+                Visit {advisor.firm_name || 'Advisor'} Website →
+              </a>
+            )}
           </div>
         </div>
       </div>
