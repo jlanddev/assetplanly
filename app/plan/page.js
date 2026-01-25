@@ -486,7 +486,7 @@ function PlanFlow() {
   }
 
   // Determine branding for current phase
-  const usesAdvisorBranding = isPhase2 || isContactStep;
+  const usesAdvisorBranding = isContactStep;
   const brandColor = usesAdvisorBranding ? primaryColor : '#1e3a5f';
 
   return (

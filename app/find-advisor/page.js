@@ -29,52 +29,47 @@ export default function FindAdvisorPage() {
 
       {/* Hero */}
       <section className="relative bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 min-h-[600px]">
-            {/* Left - Content */}
-            <div className="flex items-center px-6 lg:px-16 py-16">
-              <div className="max-w-lg">
-                <h1 className="text-4xl md:text-5xl lg:text-[56px] font-bold text-slate-900 leading-[1.08] mb-6">
-                  You're in the right place for{' '}
-                  <span className="text-[#1e3a5f]">expert financial advice</span>
-                </h1>
-                <p className="text-lg text-slate-600 mb-8">
-                  Getting started is easy and complimentary.
-                </p>
+        <div className="max-w-7xl mx-auto px-6 lg:px-16">
+          <div className="flex items-center min-h-[500px] lg:min-h-[600px] py-12">
+            {/* Content */}
+            <div className="max-w-xl relative z-10">
+              <h1 className="text-4xl md:text-5xl lg:text-[56px] font-bold text-slate-900 leading-[1.08] mb-6">
+                You're in the right place for{' '}
+                <span className="text-[#1e3a5f]">expert financial advice</span>
+              </h1>
+              <p className="text-lg text-slate-600 mb-8">
+                Getting started is easy and complimentary.
+              </p>
 
-                <Link href="/plan" className="inline-block bg-[#e5b94e] text-slate-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#d4a93d] transition-all">
-                  Find my advisor
-                </Link>
-              </div>
+              <Link href="/plan" className="inline-block bg-[#e5b94e] text-slate-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#d4a93d] transition-all">
+                Find my advisor
+              </Link>
             </div>
 
-            {/* Right - Image with curved mask */}
-            <div className="relative hidden lg:block">
-              <div
-                className="absolute inset-0"
-                style={{
-                  clipPath: 'ellipse(100% 100% at 100% 50%)',
-                }}
-              >
-                <img
-                  src="https://images.unsplash.com/photo-1559526324-593bc073d938?w=1200&h=900&fit=crop"
-                  alt="Couple planning their financial future together"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+            {/* Illustration fading to right */}
+            <div
+              className="absolute right-0 top-1/2 -translate-y-1/2 w-[50%] h-full hidden lg:block pointer-events-none"
+              style={{
+                maskImage: 'linear-gradient(to right, transparent 0%, black 30%)',
+                WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 30%)',
+              }}
+            >
+              <img
+                src="/couple-illustration.png"
+                alt="Couple planning finances"
+                className="h-full w-full object-contain object-right"
+              />
             </div>
           </div>
         </div>
 
-        {/* Mobile image */}
-        <div className="lg:hidden px-6 pb-8">
-          <div className="rounded-2xl overflow-hidden">
-            <img
-              src="https://images.unsplash.com/photo-1559526324-593bc073d938?w=800&h=500&fit=crop"
-              alt="Couple planning their financial future together"
-              className="w-full h-64 object-cover"
-            />
-          </div>
+        {/* Mobile illustration */}
+        <div className="lg:hidden flex justify-center pb-8">
+          <img
+            src="/couple-illustration.png"
+            alt="Couple planning finances"
+            className="h-48 object-contain"
+          />
         </div>
       </section>
 
