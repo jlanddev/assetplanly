@@ -35,6 +35,15 @@ export default function AdvisorSettings() {
     target_goals: []
   });
 
+  // Password change state
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState({ type: '', text: '' });
+
   const US_STATES = [
     'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia',
     'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland',
@@ -174,9 +183,10 @@ export default function AdvisorSettings() {
 
       if (data.success) {
         setMessage({ type: 'success', text: 'Settings saved successfully!' });
-        // Update local session with new name
+        // Update local session with new name and email
         const session = JSON.parse(localStorage.getItem('advisor_session'));
         session.name = formData.name;
+        session.email = formData.email;
         localStorage.setItem('advisor_session', JSON.stringify(session));
       } else {
         throw new Error(data.error || 'Failed to save');
@@ -186,6 +196,53 @@ export default function AdvisorSettings() {
     }
 
     setSaving(false);
+  };
+
+  const handlePasswordChange = async () => {
+    setPasswordMessage({ type: '', text: '' });
+
+    // Validation
+    if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+      setPasswordMessage({ type: 'error', text: 'All password fields are required' });
+      return;
+    }
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setPasswordMessage({ type: 'error', text: 'New passwords do not match' });
+      return;
+    }
+
+    if (passwordData.newPassword.length < 6) {
+      setPasswordMessage({ type: 'error', text: 'Password must be at least 6 characters' });
+      return;
+    }
+
+    setPasswordSaving(true);
+
+    try {
+      const response = await fetch('/api/advisors/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          advisorId: advisor.id,
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setPasswordMessage({ type: 'success', text: 'Password changed successfully!' });
+        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      } else {
+        throw new Error(data.error || 'Failed to change password');
+      }
+    } catch (error) {
+      setPasswordMessage({ type: 'error', text: error.message });
+    }
+
+    setPasswordSaving(false);
   };
 
   if (loading) {
@@ -295,6 +352,59 @@ export default function AdvisorSettings() {
                   placeholder="Tell prospects about your experience and approach..."
                   className="w-full bg-[#0f172a] border border-[#334155] rounded-lg px-4 py-3 text-white placeholder-[#64748b] focus:outline-none focus:border-blue-500 resize-none"
                 />
+              </div>
+            </div>
+
+            {/* Account Settings */}
+            <div className="bg-[#1e293b] rounded-xl p-6">
+              <h2 className="text-lg font-semibold text-white mb-4">Account Settings</h2>
+              <p className="text-[#64748b] text-sm mb-6">
+                Change your account password. You'll need to enter your current password to confirm.
+              </p>
+
+              {passwordMessage.text && (
+                <div className={`mb-4 p-3 rounded-lg text-sm ${passwordMessage.type === 'success' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                  {passwordMessage.text}
+                </div>
+              )}
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-[#94a3b8] mb-2">Current Password</label>
+                  <input
+                    type="password"
+                    value={passwordData.currentPassword}
+                    onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
+                    className="w-full bg-[#0f172a] border border-[#334155] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <label className="block text-sm font-medium text-[#94a3b8] mb-2">New Password</label>
+                    <input
+                      type="password"
+                      value={passwordData.newPassword}
+                      onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
+                      className="w-full bg-[#0f172a] border border-[#334155] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#94a3b8] mb-2">Confirm New Password</label>
+                    <input
+                      type="password"
+                      value={passwordData.confirmPassword}
+                      onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                      className="w-full bg-[#0f172a] border border-[#334155] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+                <button
+                  onClick={handlePasswordChange}
+                  disabled={passwordSaving}
+                  className="bg-[#334155] hover:bg-[#475569] disabled:opacity-50 text-white px-6 py-2.5 rounded-lg font-medium transition"
+                >
+                  {passwordSaving ? 'Changing...' : 'Change Password'}
+                </button>
               </div>
             </div>
 
