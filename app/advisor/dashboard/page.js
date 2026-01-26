@@ -108,6 +108,23 @@ export default function AdvisorDashboard() {
     setSavingNote(false);
   };
 
+  const deleteLead = async (leadId) => {
+    if (!confirm('Are you sure you want to remove this lead? This cannot be undone.')) return;
+    try {
+      const response = await fetch('/api/advisors/leads', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: leadId, advisorId: advisor.id })
+      });
+      if (response.ok) {
+        setSelectedLead(null);
+        fetchLeads();
+      }
+    } catch (error) {
+      console.error('Error deleting lead:', error);
+    }
+  };
+
   const saveCampaign = async () => {
     try {
       const method = editingCampaign ? 'PATCH' : 'POST';
@@ -657,6 +674,16 @@ export default function AdvisorDashboard() {
                           {savingNote ? '...' : 'Add'}
                         </button>
                       </div>
+                    </div>
+
+                    {/* Delete Lead */}
+                    <div className="pt-4 border-t border-[#334155]">
+                      <button
+                        onClick={() => deleteLead(selectedLead.id)}
+                        className="w-full text-red-400 hover:text-red-300 hover:bg-red-500/10 py-2.5 rounded-lg text-sm font-medium transition"
+                      >
+                        Remove Lead
+                      </button>
                     </div>
                   </div>
                 </div>

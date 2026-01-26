@@ -92,3 +92,52 @@ export async function PATCH(request) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
+
+export async function DELETE(request) {
+  try {
+    const body = await request.json();
+    const { id, advisorId } = body;
+
+    if (!id || !advisorId) {
+      return NextResponse.json(
+        { error: 'ID and advisor ID are required' },
+        { status: 400 }
+      );
+    }
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+
+    // Verify the lead is assigned to this advisor
+    const { data: lead } = await supabase
+      .from('advisor_leads')
+      .select('assigned_advisor_id')
+      .eq('id', id)
+      .single();
+
+    if (!lead || lead.assigned_advisor_id !== advisorId) {
+      return NextResponse.json(
+        { error: 'Unauthorized to delete this lead' },
+        { status: 403 }
+      );
+    }
+
+    // Delete the lead
+    const { error } = await supabase
+      .from('advisor_leads')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Server error:', error);
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  }
+}
