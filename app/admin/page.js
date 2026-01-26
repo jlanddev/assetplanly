@@ -24,6 +24,9 @@ export default function AdminDashboard() {
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [assigningLead, setAssigningLead] = useState(null);
 
+  // Lead detail modal
+  const [showLeadDetail, setShowLeadDetail] = useState(null);
+
   const ADMIN_PASSWORD = 'assetplanly2026';
 
   const handleLogin = (e) => {
@@ -196,6 +199,15 @@ export default function AdminDashboard() {
   const getAdvisorName = (advisorId) => {
     const advisor = advisors.find(a => a.id === advisorId);
     return advisor?.name || 'Unassigned';
+  };
+
+  // Parse notes into readable key-value pairs
+  const parseNotes = (notes) => {
+    if (!notes) return [];
+    return notes.split(' | ').map(item => {
+      const [key, ...valueParts] = item.split(': ');
+      return { key, value: valueParts.join(': ') };
+    });
   };
 
   // Stats
@@ -402,7 +414,7 @@ export default function AdminDashboard() {
             ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {filteredLeads.map(lead => (
-                  <div key={lead.id} className="bg-white rounded-lg border border-[var(--gray-200)] p-5 hover:shadow-md transition-shadow">
+                  <div key={lead.id} className="bg-white rounded-lg border border-[var(--gray-200)] p-5 hover:shadow-md transition-shadow cursor-pointer" onClick={() => setShowLeadDetail(lead)}>
                     {/* Header */}
                     <div className="flex justify-between items-start mb-3">
                       <div>
@@ -586,6 +598,127 @@ export default function AdminDashboard() {
             <button onClick={() => { setShowAssignModal(false); setAssigningLead(null); }} className="w-full btn-secondary">
               Cancel
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Lead Detail Modal */}
+      {showLeadDetail && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50" onClick={() => setShowLeadDetail(null)}>
+          <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div className="sticky top-0 bg-white border-b border-[var(--gray-200)] p-6 flex justify-between items-start">
+              <div>
+                <h2 className="text-xl font-semibold text-[var(--gray-900)]">{showLeadDetail.name}</h2>
+                <p className="text-sm text-[var(--gray-500)]">{showLeadDetail.company || 'No company'}</p>
+              </div>
+              <button onClick={() => setShowLeadDetail(null)} className="text-[var(--gray-400)] hover:text-[var(--gray-600)]">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Contact Info */}
+              <div>
+                <h3 className="text-sm font-semibold text-[var(--gray-500)] uppercase tracking-wide mb-3">Contact Information</h3>
+                <div className="bg-[var(--gray-50)] rounded-lg p-4 space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-[var(--gray-600)]">Email</span>
+                    <a href={`mailto:${showLeadDetail.email}`} className="text-[var(--blue-600)] font-medium">{showLeadDetail.email}</a>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[var(--gray-600)]">Phone</span>
+                    <a href={`tel:${showLeadDetail.phone}`} className="text-[var(--blue-600)] font-medium">{showLeadDetail.phone}</a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Actions */}
+              <div className="flex gap-3">
+                <a href={`tel:${showLeadDetail.phone}`} className="flex-1 btn-primary text-center">
+                  Call Now
+                </a>
+                <a href={`mailto:${showLeadDetail.email}`} className="flex-1 btn-secondary text-center">
+                  Send Email
+                </a>
+              </div>
+
+              {/* Lead Status */}
+              <div>
+                <h3 className="text-sm font-semibold text-[var(--gray-500)] uppercase tracking-wide mb-3">Lead Status</h3>
+                <div className="bg-[var(--gray-50)] rounded-lg p-4 space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-[var(--gray-600)]">Status</span>
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(showLeadDetail.status)}`}>
+                      {showLeadDetail.status}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[var(--gray-600)]">Source</span>
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getSourceColor(showLeadDetail.source)}`}>
+                      {showLeadDetail.source || 'direct'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[var(--gray-600)]">Assigned To</span>
+                    <span className="font-medium">{getAdvisorName(showLeadDetail.assigned_advisor_id)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[var(--gray-600)]">Received</span>
+                    <span>{formatDate(showLeadDetail.created_at)}</span>
+                  </div>
+                  {showLeadDetail.scheduled_at && (
+                    <div className="flex justify-between">
+                      <span className="text-[var(--gray-600)]">Scheduled</span>
+                      <span className="text-[var(--blue-600)]">{formatDate(showLeadDetail.scheduled_at)}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Question Answers */}
+              {showLeadDetail.notes && (
+                <div>
+                  <h3 className="text-sm font-semibold text-[var(--gray-500)] uppercase tracking-wide mb-3">Questionnaire Answers</h3>
+                  <div className="bg-[var(--gray-50)] rounded-lg p-4 space-y-3">
+                    {parseNotes(showLeadDetail.notes).map((item, idx) => (
+                      <div key={idx} className="border-b border-[var(--gray-200)] pb-3 last:border-0 last:pb-0">
+                        <div className="text-xs font-semibold text-[var(--gray-500)] uppercase mb-1">{item.key}</div>
+                        <div className="text-[var(--gray-900)]">{item.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Meeting Goals / Message */}
+              {showLeadDetail.message && (
+                <div>
+                  <h3 className="text-sm font-semibold text-[var(--gray-500)] uppercase tracking-wide mb-3">Meeting Goals</h3>
+                  <div className="bg-[var(--blue-50)] border border-[var(--blue-200)] rounded-lg p-4">
+                    <p className="text-[var(--gray-900)] whitespace-pre-wrap">{showLeadDetail.message}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="flex gap-3 pt-4 border-t border-[var(--gray-200)]">
+                <button
+                  onClick={() => { setShowLeadDetail(null); setAssigningLead(showLeadDetail); setShowAssignModal(true); }}
+                  className="flex-1 btn-secondary"
+                >
+                  Reassign
+                </button>
+                <button
+                  onClick={() => { setShowLeadDetail(null); setSelectedLead(showLeadDetail); }}
+                  className="flex-1 btn-primary"
+                >
+                  Schedule Call
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

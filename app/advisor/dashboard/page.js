@@ -148,6 +148,19 @@ export default function AdvisorDashboard() {
     });
   };
 
+  // Parse notes field into array of key-value pairs
+  const parseNotes = (notes) => {
+    if (!notes) return [];
+    return notes.split(' | ').map(item => {
+      const colonIndex = item.indexOf(':');
+      if (colonIndex === -1) return { key: 'Note', value: item };
+      return {
+        key: item.substring(0, colonIndex).trim(),
+        value: item.substring(colonIndex + 1).trim()
+      };
+    });
+  };
+
   // Filter leads
   const getFilteredLeads = () => {
     return leads.filter(lead => {
@@ -568,10 +581,6 @@ export default function AdvisorDashboard() {
                       <h3 className="text-sm font-medium text-[#64748b] mb-3">Lead Details</h3>
                       <div className="bg-[#0f172a] rounded-lg p-4 space-y-3">
                         <div className="flex justify-between">
-                          <span className="text-[#64748b]">Leads wanted</span>
-                          <span className="text-white">{selectedLead.leads_per_month || '-'}/mo</span>
-                        </div>
-                        <div className="flex justify-between">
                           <span className="text-[#64748b]">Source</span>
                           <span className="text-white capitalize">{selectedLead.source || 'Direct'}</span>
                         </div>
@@ -585,14 +594,33 @@ export default function AdvisorDashboard() {
                           <span className="text-[#64748b]">Received</span>
                           <span className="text-white">{formatDateTime(selectedLead.created_at)}</span>
                         </div>
-                        {selectedLead.notes && (
-                          <div className="pt-2 border-t border-[#334155]">
-                            <span className="text-[#64748b] text-sm">Initial notes:</span>
-                            <p className="text-white mt-1">{selectedLead.notes}</p>
-                          </div>
-                        )}
                       </div>
                     </div>
+
+                    {/* Questionnaire Answers */}
+                    {selectedLead.notes && parseNotes(selectedLead.notes).length > 0 && (
+                      <div>
+                        <h3 className="text-sm font-medium text-[#64748b] mb-3">Questionnaire Answers</h3>
+                        <div className="bg-[#0f172a] rounded-lg p-4 space-y-3">
+                          {parseNotes(selectedLead.notes).map((item, idx) => (
+                            <div key={idx} className="flex justify-between items-start gap-4">
+                              <span className="text-[#64748b] text-sm flex-shrink-0">{item.key}</span>
+                              <span className="text-white text-sm text-right">{item.value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Meeting Goals */}
+                    {selectedLead.message && (
+                      <div>
+                        <h3 className="text-sm font-medium text-[#64748b] mb-3">Meeting Goals</h3>
+                        <div className="bg-[#0f172a] rounded-lg p-4">
+                          <p className="text-white text-sm">{selectedLead.message}</p>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Notes Section */}
                     <div>
