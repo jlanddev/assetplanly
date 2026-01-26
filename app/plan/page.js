@@ -15,14 +15,14 @@ function PlanFlow() {
   const [formData, setFormData] = useState({
     // Phase 1 - qualifying questions to find advisor
     zipCode: '',
-    retireTimeline: '',
-    ownsHome: '',
-    ownsBusiness: '',
+    whyNow: '',
+    whyNowOther: '', // if whyNow = 'other'
+    whatYouWant: '',
     hasAdvisor: '',
-    whySwitching: '', // follow-up if hasAdvisor = yes
-    localPreference: '',
-    portfolioSize: '',
-    income: '',
+    whyChanging: '', // optional follow-up
+    financialComplexity: '',
+    investableAssets: '',
+    netWorth: '',
     // Phase 2 - scheduling (after advisor found)
     meetingGoals: '',
     firstName: '',
@@ -41,7 +41,7 @@ function PlanFlow() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          portfolioSize: formData.portfolioSize,
+          investableAssets: formData.investableAssets,
           zipCode: formData.zipCode
         })
       });
@@ -61,18 +61,27 @@ function PlanFlow() {
     // Determine next step
     let nextStep = currentStep + 1;
 
-    // If user says they DON'T have an advisor, skip the whySwitching question
-    if (field === 'hasAdvisor' && value === 'no') {
-      // Skip the whySwitching question (which is the next one)
-      nextStep = currentStep + 2;
+    // If user selects "no first time" for advisor, skip the whyChanging question
+    if (field === 'hasAdvisor' && value === 'no-first-time') {
+      nextStep = currentStep + 2; // Skip whyChanging
     }
 
-    // Check if we've answered the last question (income) - fetch advisor
+    // Check if we've answered the last question - fetch advisor
     const lastQuestionStep = totalPhase1;
     if (currentStep === lastQuestionStep || nextStep > lastQuestionStep) {
       setTimeout(() => fetchAdvisor(), 300);
     } else {
       setTimeout(() => setCurrentStep(nextStep), 250);
+    }
+  };
+
+  const handleSkip = () => {
+    const nextStep = currentStep + 1;
+    const lastQuestionStep = totalPhase1;
+    if (nextStep > lastQuestionStep) {
+      setTimeout(() => fetchAdvisor(), 300);
+    } else {
+      setCurrentStep(nextStep);
     }
   };
 
@@ -107,17 +116,17 @@ function PlanFlow() {
           email: formData.email,
           phone: formData.phone,
           zipCode: formData.zipCode,
-          income: formData.income,
-          retireTimeline: formData.retireTimeline,
-          ownsHome: formData.ownsHome,
-          ownsBusiness: formData.ownsBusiness,
-          portfolioSize: formData.portfolioSize,
+          whyNow: formData.whyNow,
+          whyNowOther: formData.whyNowOther,
+          whatYouWant: formData.whatYouWant,
           hasAdvisor: formData.hasAdvisor,
-          whySwitching: formData.whySwitching,
-          localPreference: formData.localPreference,
+          whyChanging: formData.whyChanging,
+          financialComplexity: formData.financialComplexity,
+          investableAssets: formData.investableAssets,
+          netWorth: formData.netWorth,
           meetingGoals: formData.meetingGoals,
           matchedAdvisorId: advisor?.id,
-          source: 'concierge'
+          source: 'consumer-find-advisor'
         }),
       });
 
@@ -142,90 +151,90 @@ function PlanFlow() {
   };
 
   // Phase 1: Qualifying questions to find the right advisor
-  // Non-money questions first, then money questions at the end
   const phase1Questions = [
     {
-      key: 'retireTimeline',
-      title: 'When do you plan to retire?',
+      key: 'whyNow',
+      title: "What's going on in your life that made you start looking for an advisor?",
+      hasOther: true,
       options: [
-        { value: '1-5', label: '1-5 years' },
-        { value: '5-10', label: '5-10 years' },
-        { value: '10+', label: '10+ years' },
-        { value: 'retired', label: 'Already retired' },
+        { value: 'closer-to-retirement', label: 'Getting closer to retirement' },
+        { value: 'recently-retired', label: 'Recently retired' },
+        { value: 'rollover', label: 'Rolling over a 401k or pension' },
+        { value: 'windfall', label: 'Came into money (inheritance, sale, bonus)' },
+        { value: 'business-exit', label: 'Selling or exiting a business' },
+        { value: 'market-concerns', label: 'Concerned about the market' },
+        { value: 'life-change', label: 'Major life change (job, divorce, move)' },
+        { value: 'unhappy-advisor', label: 'Not happy with my current advisor' },
+        { value: 'need-plan', label: 'Want a clearer long-term plan' },
+        { value: 'other', label: 'Other' },
       ]
     },
     {
-      key: 'ownsHome',
-      title: 'Do you own your home?',
+      key: 'whatYouWant',
+      title: "What do you want your money to do for you in the next chapter?",
       options: [
-        { value: 'yes', label: 'Yes' },
-        { value: 'no', label: 'No' },
-      ]
-    },
-    {
-      key: 'ownsBusiness',
-      title: 'Do you own a business?',
-      options: [
-        { value: 'yes', label: 'Yes' },
-        { value: 'no', label: 'No' },
+        { value: 'retirement-confidence', label: 'Feel confident about retirement' },
+        { value: 'grow-wealth', label: 'Grow what I\'ve built' },
+        { value: 'protect-wealth', label: 'Protect and preserve wealth' },
+        { value: 'reduce-taxes', label: 'Reduce taxes' },
+        { value: 'family-legacy', label: 'Plan for family and legacy' },
+        { value: 'business-exit', label: 'Prepare for a business exit' },
+        { value: 'everything', label: 'A bit of everything' },
       ]
     },
     {
       key: 'hasAdvisor',
-      title: 'Do you currently have a financial advisor?',
+      title: "Are you currently working with a financial advisor?",
+      hasFollowUp: true,
       options: [
-        { value: 'yes', label: 'Yes' },
-        { value: 'no', label: 'No' },
+        { value: 'no-first-time', label: 'No, this would be my first time' },
+        { value: 'yes-considering-change', label: 'Yes, but I\'m thinking about making a change' },
+        { value: 'yes-second-opinion', label: 'Yes, and I\'d like a second opinion' },
+        { value: 'yes-early-research', label: 'Yes, just doing some early research' },
       ]
     },
     {
-      key: 'whySwitching',
-      title: 'What has you considering a change?',
-      subtitle: 'This helps us understand your needs better',
-      conditional: true, // only show if hasAdvisor = yes
+      key: 'whyChanging',
+      title: "What's making you consider a change?",
+      subtitle: 'Optional - skip if you prefer',
+      conditional: true,
+      isTextArea: true,
+      optional: true,
+    },
+    {
+      key: 'financialComplexity',
+      title: "How would you describe your financial life right now?",
       options: [
-        { value: 'not-responsive', label: 'My advisor isn\'t responsive' },
-        { value: 'poor-performance', label: 'Not happy with performance' },
-        { value: 'high-fees', label: 'Fees are too high' },
-        { value: 'need-more-services', label: 'Need more comprehensive planning' },
-        { value: 'second-opinion', label: 'Just want a second opinion' },
-        { value: 'other', label: 'Other reasons' },
+        { value: 'simple', label: 'Pretty simple and straightforward' },
+        { value: 'moderate', label: 'A little complex (multiple accounts, some tax questions)' },
+        { value: 'complex', label: 'Quite complex (business, real estate, trusts, stock options)' },
       ]
     },
     {
-      key: 'localPreference',
-      title: 'Does your advisor need to be local?',
-      subtitle: 'All advisors can meet via phone or video',
+      key: 'investableAssets',
+      title: "To make sure we connect you with the right advisor, roughly how much do you have set aside for investing?",
+      subtitle: 'Not including your home',
       options: [
-        { value: 'yes', label: 'Yes, I prefer local' },
-        { value: 'no', label: 'No, remote is fine' },
-        { value: 'flexible', label: 'No preference' },
-      ]
-    },
-    // Money questions at the end
-    {
-      key: 'portfolioSize',
-      title: 'What are your total investable assets?',
-      subtitle: 'Include retirement accounts, savings, and investments',
-      options: [
-        { value: 'under-100k', label: 'Under $100,000' },
-        { value: '100k-250k', label: '$100,000 - $250,000' },
-        { value: '250k-500k', label: '$250,000 - $500,000' },
-        { value: '500k-1m', label: '$500,000 - $1,000,000' },
-        { value: '1m-5m', label: '$1,000,000 - $5,000,000' },
-        { value: '5m+', label: '$5,000,000+' },
+        { value: 'under-50k', label: 'Under $50k' },
+        { value: '50k-150k', label: '$50k - $150k' },
+        { value: '150k-500k', label: '$150k - $500k' },
+        { value: '500k-1m', label: '$500k - $1M' },
+        { value: '1m-5m', label: '$1M - $5M' },
+        { value: '5m+', label: '$5M+' },
       ]
     },
     {
-      key: 'income',
-      title: 'What is your household income?',
+      key: 'netWorth',
+      title: "If you're comfortable sharing, what's your approximate total net worth including real estate and any businesses?",
+      subtitle: 'Optional',
+      optional: true,
       options: [
-        { value: 'under-40k', label: 'Less than $40,000' },
-        { value: '40k-75k', label: '$40,000 - $74,999' },
-        { value: '75k-100k', label: '$75,000 - $99,999' },
-        { value: '100k-150k', label: '$100,000 - $149,999' },
-        { value: '150k-250k', label: '$150,000 - $249,999' },
-        { value: '250k+', label: '$250,000+' },
+        { value: 'under-500k', label: 'Under $500k' },
+        { value: '500k-1m', label: '$500k - $1M' },
+        { value: '1m-5m', label: '$1M - $5M' },
+        { value: '5m-10m', label: '$5M - $10M' },
+        { value: '10m+', label: '$10M+' },
+        { value: 'prefer-not', label: 'Prefer not to say' },
       ]
     },
   ];
@@ -243,7 +252,7 @@ function PlanFlow() {
 
   // Skip conditional questions that don't apply
   const shouldSkipCurrentQuestion = currentQuestion?.conditional &&
-    currentQuestion.key === 'whySwitching' && formData.hasAdvisor !== 'yes';
+    currentQuestion.key === 'whyChanging' && formData.hasAdvisor === 'no-first-time';
 
   // Auto-skip conditional questions that don't apply
   useEffect(() => {
@@ -547,23 +556,90 @@ function PlanFlow() {
               )}
               {!currentQuestion.subtitle && <div className="mb-10" />}
 
-              <div className="space-y-3">
-                {currentQuestion.options.map((opt) => (
-                  <button
-                    key={opt.value}
-                    onClick={() => handleSelect(currentQuestion.key, opt.value)}
-                    className="w-full p-5 rounded-xl border-2 transition-all hover:shadow-md text-left flex items-center justify-between group bg-white"
-                    style={{
-                      borderColor: formData[currentQuestion.key] === opt.value ? brandColor : '#e5e7eb',
-                    }}
-                  >
-                    <span className="text-lg font-medium text-gray-900">{opt.label}</span>
-                    <svg className="w-5 h-5 text-gray-300 group-hover:text-gray-500 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                ))}
-              </div>
+              {/* Text area question (whyChanging) */}
+              {currentQuestion.isTextArea ? (
+                <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+                  <textarea
+                    value={formData[currentQuestion.key]}
+                    onChange={(e) => setFormData(prev => ({ ...prev, [currentQuestion.key]: e.target.value }))}
+                    placeholder="Share your thoughts (optional)..."
+                    rows={4}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:border-transparent outline-none resize-none"
+                  />
+                  <div className="flex gap-3 mt-6">
+                    <button
+                      onClick={handleSkip}
+                      className="flex-1 py-4 rounded-xl font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 transition"
+                    >
+                      Skip
+                    </button>
+                    <button
+                      onClick={() => handleSelect(currentQuestion.key, formData[currentQuestion.key])}
+                      className="flex-1 py-4 rounded-xl font-semibold text-white transition"
+                      style={{ backgroundColor: brandColor }}
+                    >
+                      Continue
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* Multiple choice options */
+                <div className="space-y-3">
+                  {currentQuestion.options?.map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => {
+                        if (opt.value === 'other' && currentQuestion.hasOther) {
+                          setFormData(prev => ({ ...prev, [currentQuestion.key]: 'other' }));
+                        } else {
+                          handleSelect(currentQuestion.key, opt.value);
+                        }
+                      }}
+                      className="w-full p-5 rounded-xl border-2 transition-all hover:shadow-md text-left flex items-center justify-between group bg-white"
+                      style={{
+                        borderColor: formData[currentQuestion.key] === opt.value ? brandColor : '#e5e7eb',
+                      }}
+                    >
+                      <span className="text-lg font-medium text-gray-900">{opt.label}</span>
+                      <svg className="w-5 h-5 text-gray-300 group-hover:text-gray-500 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  ))}
+
+                  {/* "Other" text input */}
+                  {currentQuestion.hasOther && formData[currentQuestion.key] === 'other' && (
+                    <div className="mt-4 bg-white rounded-xl p-4 border-2" style={{ borderColor: brandColor }}>
+                      <input
+                        type="text"
+                        value={formData.whyNowOther}
+                        onChange={(e) => setFormData(prev => ({ ...prev, whyNowOther: e.target.value }))}
+                        placeholder="Please specify..."
+                        className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:border-transparent outline-none"
+                        autoFocus
+                      />
+                      <button
+                        onClick={() => handleSelect(currentQuestion.key, 'other')}
+                        disabled={!formData.whyNowOther}
+                        className="w-full mt-3 py-3 rounded-lg font-semibold text-white transition disabled:opacity-50"
+                        style={{ backgroundColor: brandColor }}
+                      >
+                        Continue
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Skip button for optional questions */}
+                  {currentQuestion.optional && !currentQuestion.isTextArea && (
+                    <button
+                      onClick={handleSkip}
+                      className="w-full mt-4 py-4 rounded-xl font-semibold text-gray-500 bg-gray-100 hover:bg-gray-200 transition"
+                    >
+                      Skip this question
+                    </button>
+                  )}
+                </div>
+              )}
 
               {currentStep > 1 && (
                 <button
