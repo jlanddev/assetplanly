@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { sendAdvisorWelcome } from '../../../lib/postmark';
 
 // Simple password hashing (for production, use bcrypt)
 function hashPassword(password) {
@@ -68,6 +69,12 @@ export async function POST(request) {
       }
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    // Send welcome email (don't block on failure)
+    const firstName = name.split(' ')[0];
+    sendAdvisorWelcome({ email, firstName }).catch(err =>
+      console.error('Welcome email failed:', err)
+    );
 
     return NextResponse.json({ success: true, data });
   } catch (error) {

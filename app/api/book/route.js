@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
+import { sendAdvisorLeadNotification, sendAdminLeadNotification } from '../../../lib/postmark';
 
 // Determine lead source from UTM params
 function determineSource(utmSource, utmMedium) {
@@ -187,8 +188,9 @@ export async function POST(request) {
     console.log('Insert successful:', data);
 
     // If no matched advisor, use round-robin assignment
+    let assignedAdvisorId = matchedAdvisorId;
     if (data && data[0] && !matchedAdvisorId) {
-      await assignToNextAdvisor(supabase, data[0].id);
+      assignedAdvisorId = await assignToNextAdvisor(supabase, data[0].id);
     } else if (matchedAdvisorId) {
       // Increment lead count for matched advisor
       const { data: advisor } = await supabase
@@ -206,6 +208,50 @@ export async function POST(request) {
           })
           .eq('id', matchedAdvisorId);
       }
+    }
+
+    // Send email notifications (don't block on failure)
+    try {
+      // Get assigned advisor details for email
+      let advisorName = null;
+      let advisorEmail = null;
+      let advisorFirstName = null;
+
+      if (assignedAdvisorId) {
+        const { data: advisorData } = await supabase
+          .from('advisors')
+          .select('name, email')
+          .eq('id', assignedAdvisorId)
+          .single();
+
+        if (advisorData) {
+          advisorName = advisorData.name;
+          advisorEmail = advisorData.email;
+          advisorFirstName = advisorData.name?.split(' ')[0] || 'Advisor';
+        }
+      }
+
+      // Send admin notification
+      sendAdminLeadNotification({
+        leadName: leadName,
+        leadPhone: phone,
+        leadEmail: email,
+        advisorName: advisorName,
+        campaignName: source,
+      }).catch(err => console.error('Admin email failed:', err));
+
+      // Send advisor notification if assigned
+      if (advisorEmail) {
+        sendAdvisorLeadNotification({
+          advisorEmail,
+          advisorFirstName,
+          leadName: leadName,
+          leadPhone: phone,
+          leadEmail: email,
+        }).catch(err => console.error('Advisor email failed:', err));
+      }
+    } catch (emailErr) {
+      console.error('Email notification error:', emailErr);
     }
 
     return NextResponse.json({ success: true, data });
