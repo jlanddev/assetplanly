@@ -102,14 +102,16 @@ export async function POST(request) {
       leadsPerMonth,
       scheduledAt,
       message,
-      // Consumer match flow fields
-      income,
-      retireTimeline,
-      ownsHome,
-      ownsBusiness,
-      portfolioSize,
+      // NEW Consumer find-advisor flow fields
+      whyNow,
+      whyNowOther,
+      whatYouWant,
       hasAdvisor,
-      localPreference,
+      whyChanging,
+      financialComplexity,
+      investableAssets,
+      netWorth,
+      meetingGoals,
       matchedAdvisorId,
       // Tracking
       utmSource,
@@ -141,14 +143,15 @@ export async function POST(request) {
     // Build notes from consumer flow data
     let notesArray = [];
     if (verified && crdNumber) notesArray.push(`Verified RIA - CRD #${crdNumber}`);
-    if (income) notesArray.push(`Income: ${income}`);
-    if (retireTimeline) notesArray.push(`Retire timeline: ${retireTimeline}`);
-    if (ownsHome) notesArray.push(`Owns home: ${ownsHome}`);
-    if (ownsBusiness) notesArray.push(`Owns business: ${ownsBusiness}`);
-    if (portfolioSize) notesArray.push(`Portfolio: ${portfolioSize}`);
-    if (hasAdvisor) notesArray.push(`Has advisor: ${hasAdvisor}`);
-    if (localPreference) notesArray.push(`Local pref: ${localPreference}`);
     if (zipCode) notesArray.push(`ZIP: ${zipCode}`);
+    if (whyNow) notesArray.push(`Why looking: ${whyNow}${whyNowOther ? ` - ${whyNowOther}` : ''}`);
+    if (whatYouWant) notesArray.push(`Goals: ${whatYouWant}`);
+    if (hasAdvisor) notesArray.push(`Has advisor: ${hasAdvisor}`);
+    if (whyChanging) notesArray.push(`Why changing: ${whyChanging}`);
+    if (financialComplexity) notesArray.push(`Complexity: ${financialComplexity}`);
+    if (investableAssets) notesArray.push(`Investable assets: ${investableAssets}`);
+    if (netWorth) notesArray.push(`Net worth: ${netWorth}`);
+    if (meetingGoals) notesArray.push(`Meeting goals: ${meetingGoals}`);
 
     // Build insert data
     const insertData = {
@@ -158,7 +161,7 @@ export async function POST(request) {
       company: firmName || null,
       leads_per_month: leadsPerMonth || null,
       scheduled_at: scheduledAt || null,
-      message: message || null,
+      message: message || meetingGoals || null,
       status: scheduledAt ? 'scheduled' : 'new',
       notes: notesArray.length > 0 ? notesArray.join(' | ') : null,
       source,

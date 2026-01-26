@@ -382,7 +382,7 @@ function PlanFlow() {
                     {/* Info */}
                     <div className="text-center md:text-left flex-1">
                       <h2 className="text-2xl font-bold text-slate-900 mb-1">
-                        {advisor?.name || 'Your Advisor'}
+                        {advisor?.name || 'Your Advisor'}{advisor?.credentials && `, ${advisor.credentials}`}
                       </h2>
                       {advisor?.firm_name && (
                         <p className="text-slate-600 font-medium mb-3">{advisor.firm_name}</p>
@@ -404,7 +404,7 @@ function PlanFlow() {
                 {/* What's next */}
                 <div className="text-center mb-8">
                   <p className="text-slate-600">
-                    A few more questions will help {advisor?.name?.split(' ')[0] || 'your advisor'} prepare a personalized plan for your complimentary consultation.
+                    A few more questions will help us prepare for your meeting with {advisor?.nickname || advisor?.name?.split(' ')[0] || 'your advisor'}.
                   </p>
                 </div>
 
@@ -474,7 +474,7 @@ function PlanFlow() {
             </h1>
 
             <p className="text-lg text-white/80 mb-8">
-              {advisor?.name || 'Your advisor'} will contact you within 24 hours to schedule your complimentary planning session.
+              {advisor?.nickname || advisor?.name?.split(' ')[0] || 'Your advisor'} will contact you within 24 hours to schedule your complimentary planning session.
             </p>
 
             {advisor && (
@@ -489,7 +489,7 @@ function PlanFlow() {
                   )}
                   <div className="text-left">
                     <div className="font-semibold text-white text-lg">
-                      {advisor.name}
+                      {advisor.name}{advisor.credentials && `, ${advisor.credentials}`}
                     </div>
                     <div className="text-white/70">{advisor.firm_name}</div>
                   </div>
