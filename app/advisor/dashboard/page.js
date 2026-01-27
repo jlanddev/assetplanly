@@ -8,6 +8,7 @@ import Image from 'next/image';
 export default function AdvisorDashboard() {
   const router = useRouter();
   const [advisor, setAdvisor] = useState(null);
+  const [isAdminView, setIsAdminView] = useState(false);
   const [leads, setLeads] = useState([]);
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,7 +36,9 @@ export default function AdvisorDashboard() {
       router.push('/advisor');
       return;
     }
-    setAdvisor(JSON.parse(session));
+    const parsed = JSON.parse(session);
+    setAdvisor(parsed);
+    setIsAdminView(parsed.isAdminImpersonation === true);
   }, [router]);
 
   useEffect(() => {
@@ -220,9 +223,26 @@ export default function AdvisorDashboard() {
   const filteredLeads = getFilteredLeads();
 
   return (
-    <div className="min-h-screen bg-[#0f172a] flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-[#1e293b] border-r border-[#334155] flex flex-col">
+    <div className="min-h-screen bg-[#0f172a] flex flex-col">
+      {/* Admin Impersonation Banner */}
+      {isAdminView && (
+        <div className="bg-yellow-500 text-black px-4 py-2 text-center text-sm font-medium flex items-center justify-center gap-4">
+          <span>Viewing as: {advisor.name}</span>
+          <button
+            onClick={() => {
+              localStorage.removeItem('advisor_session');
+              window.close();
+            }}
+            className="bg-black/20 hover:bg-black/30 px-3 py-1 rounded text-xs font-semibold transition"
+          >
+            Exit Admin View
+          </button>
+        </div>
+      )}
+
+      <div className="flex-1 flex overflow-hidden">
+        {/* Sidebar */}
+        <aside className="w-64 bg-[#1e293b] border-r border-[#334155] flex flex-col flex-shrink-0">
         <div className="p-5 border-b border-[#334155]">
           <Link href="/" className="flex items-center gap-2">
             <span className="text-xl font-bold text-white">AssetPlanly</span>
@@ -304,8 +324,8 @@ export default function AdvisorDashboard() {
         </div>
       </aside>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
         <header className="bg-[#1e293b] border-b border-[#334155] px-6 py-4">
           <div className="flex justify-between items-center">
@@ -620,9 +640,9 @@ export default function AdvisorDashboard() {
                         <h3 className="text-sm font-medium text-[#64748b] mb-3">Questionnaire Answers</h3>
                         <div className="bg-[#0f172a] rounded-lg p-4 space-y-3">
                           {parseNotes(selectedLead.notes).map((item, idx) => (
-                            <div key={idx} className="flex justify-between items-start gap-4">
-                              <span className="text-[#64748b] text-sm flex-shrink-0">{item.key}</span>
-                              <span className="text-white text-sm text-right">{item.value}</span>
+                            <div key={idx} className="flex flex-col gap-1">
+                              <span className="text-[#94a3b8] text-xs font-medium uppercase">{item.key}</span>
+                              <span className="text-white text-sm">{item.value}</span>
                             </div>
                           ))}
                         </div>
@@ -926,6 +946,7 @@ export default function AdvisorDashboard() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

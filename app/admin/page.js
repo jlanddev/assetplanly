@@ -159,6 +159,19 @@ export default function AdminDashboard() {
     }
   };
 
+  const impersonateAdvisor = (advisor) => {
+    // Set advisor session with admin flag
+    const session = {
+      id: advisor.id,
+      name: advisor.name,
+      email: advisor.email,
+      isAdminImpersonation: true
+    };
+    localStorage.setItem('advisor_session', JSON.stringify(session));
+    // Open advisor dashboard in new tab
+    window.open('/advisor/dashboard', '_blank');
+  };
+
   const getSourceColor = (source) => {
     switch (source) {
       case 'ppc': return 'bg-blue-100 text-blue-800';
@@ -334,6 +347,12 @@ export default function AdminDashboard() {
                         {advisor.leads_assigned_count || 0} leads assigned
                       </span>
                       <div className="flex gap-2">
+                        <button
+                          onClick={() => impersonateAdvisor(advisor)}
+                          className="text-sm text-[var(--green-600)] hover:text-[var(--green-700)] font-medium"
+                        >
+                          View Dashboard
+                        </button>
                         <button
                           onClick={() => { setEditingAdvisor(advisor); setAdvisorForm({ name: advisor.name, email: advisor.email, phone: advisor.phone || '', firmName: advisor.firm_name || '', password: '' }); setShowAdvisorModal(true); }}
                           className="text-sm text-[var(--blue-600)] hover:text-[var(--blue-700)]"
