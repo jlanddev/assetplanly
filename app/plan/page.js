@@ -4,12 +4,47 @@ import { useState, useEffect, Suspense } from 'react';
 import Link from "next/link";
 import Image from "next/image";
 
+// Email validation - checks format and blocks fake/disposable domains
+const validateEmail = (email) => {
+  if (!email) return { valid: false, error: 'Email is required' };
+
+  // Basic format check
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(email)) {
+    return { valid: false, error: 'Please enter a valid email address' };
+  }
+
+  const domain = email.split('@')[1].toLowerCase();
+
+  // Block disposable/temporary email domains
+  const disposableDomains = [
+    'tempmail.com', 'throwaway.com', 'guerrillamail.com', 'mailinator.com',
+    'temp-mail.org', '10minutemail.com', 'fakeinbox.com', 'trashmail.com',
+    'yopmail.com', 'sharklasers.com', 'getnada.com', 'tempail.com',
+    'emailondeck.com', 'mohmal.com', 'dispostable.com', 'maildrop.cc',
+    'getairmail.com', 'temp-mail.io', 'burnermail.io', 'spamgourmet.com'
+  ];
+
+  if (disposableDomains.includes(domain)) {
+    return { valid: false, error: 'Please use a permanent email address' };
+  }
+
+  // Check for obviously fake domains (no dot, too short, etc.)
+  const domainParts = domain.split('.');
+  if (domainParts.length < 2 || domainParts[0].length < 2 || domainParts[domainParts.length - 1].length < 2) {
+    return { valid: false, error: 'Please enter a valid email domain' };
+  }
+
+  return { valid: true, error: null };
+};
+
 function PlanFlow() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [advisor, setAdvisor] = useState(null);
   const [error, setError] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [showAdvisorReveal, setShowAdvisorReveal] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -726,10 +761,20 @@ function PlanFlow() {
                       type="email"
                       name="email"
                       value={formData.email}
-                      onChange={handleChange}
+                      onChange={(e) => {
+                        handleChange(e);
+                        if (emailError) setEmailError('');
+                      }}
+                      onBlur={(e) => {
+                        const result = validateEmail(e.target.value);
+                        if (!result.valid) setEmailError(result.error);
+                      }}
                       required
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:border-transparent outline-none"
+                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:border-transparent outline-none ${emailError ? 'border-red-400 bg-red-50' : 'border-gray-200'}`}
                     />
+                    {emailError && (
+                      <p className="text-red-500 text-sm mt-1">{emailError}</p>
+                    )}
                   </div>
 
                   <div>
@@ -753,7 +798,7 @@ function PlanFlow() {
 
                   <button
                     type="submit"
-                    disabled={isSubmitting || !formData.firstName || !formData.email || !formData.phone || formData.meetingGoals.length < 150}
+                    disabled={isSubmitting || !formData.firstName || !formData.email || !formData.phone || formData.meetingGoals.length < 150 || !validateEmail(formData.email).valid}
                     className="w-full py-4 rounded-xl font-semibold text-lg text-white transition-all disabled:opacity-50"
                     style={{ backgroundColor: brandColor }}
                   >
