@@ -9,18 +9,7 @@ export default function FindAdvisorPage() {
 
   const handleGetStarted = (e) => {
     e.preventDefault();
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      window.gtag('event', 'conversion', {
-        'send_to': 'AW-17733369236/on9LCMmR4sAbEJT79odC',
-        'value': 1.0,
-        'currency': 'USD',
-        'event_callback': () => router.push('/plan')
-      });
-      // Fallback in case callback doesn't fire
-      setTimeout(() => router.push('/plan'), 1000);
-    } else {
-      router.push('/plan');
-    }
+    router.push('/plan');
   };
 
   return (

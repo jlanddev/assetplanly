@@ -761,20 +761,10 @@ function PlanFlow() {
                       type="email"
                       name="email"
                       value={formData.email}
-                      onChange={(e) => {
-                        handleChange(e);
-                        if (emailError) setEmailError('');
-                      }}
-                      onBlur={(e) => {
-                        const result = validateEmail(e.target.value);
-                        if (!result.valid) setEmailError(result.error);
-                      }}
+                      onChange={handleChange}
                       required
-                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:border-transparent outline-none ${emailError ? 'border-red-400 bg-red-50' : 'border-gray-200'}`}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:border-transparent outline-none"
                     />
-                    {emailError && (
-                      <p className="text-red-500 text-sm mt-1">{emailError}</p>
-                    )}
                   </div>
 
                   <div>
