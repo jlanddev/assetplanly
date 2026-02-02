@@ -118,37 +118,53 @@ function FormModal({ isOpen, onClose }) {
   // Success screen
   if (isSubmitted) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1e3a5f]">
-        <div className="max-w-md text-center">
-          <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-6">
-            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
+      <div className="fixed inset-0 z-50 flex flex-col bg-[#1e3a5f]">
+        {/* Persistent header on success too */}
+        <div className="flex-shrink-0 px-5 pt-4 pb-3 bg-white">
+          <div className="flex items-center justify-center mb-4">
+            <Image src="/logo.png" alt="AssetPlanly" width={130} height={32} className="h-7 w-auto" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-            You're All Set, {formData.firstName}!
-          </h1>
-          <p className="text-white/80 mb-8">
-            A qualified fiduciary advisor will reach out within 24 hours to schedule your complimentary consultation.
-          </p>
-          <div className="bg-white/10 backdrop-blur rounded-2xl p-5 mb-6">
-            <h3 className="font-semibold text-white mb-3">What happens next?</h3>
-            <ul className="text-white/70 text-sm text-left space-y-2">
-              <li className="flex items-start gap-2">
-                <svg className="w-5 h-5 text-white/50 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                Your advisor will call to introduce themselves
-              </li>
-              <li className="flex items-start gap-2">
-                <svg className="w-5 h-5 text-white/50 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                Schedule your free planning session
-              </li>
-              <li className="flex items-start gap-2">
-                <svg className="w-5 h-5 text-white/50 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                No obligation - just helpful guidance
-              </li>
-            </ul>
+          <div className="text-center">
+            <h1 className="text-lg sm:text-xl font-bold text-[#1e3a5f] mb-1">
+              Schedule Your Complimentary Fiduciary Advisor Meeting
+            </h1>
+            <p className="text-sm text-gray-500">
+              Clear next steps to protect and grow your wealth
+            </p>
           </div>
-          <Image src="/logo.png" alt="AssetPlanly" width={120} height={30} className="mx-auto opacity-50" />
+        </div>
+
+        <div className="flex-1 flex items-center justify-center p-4">
+          <div className="max-w-md text-center">
+            <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-6">
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
+              You're All Set, {formData.firstName}!
+            </h2>
+            <p className="text-white/80 mb-8">
+              A qualified fiduciary advisor will reach out within 24 hours to schedule your complimentary consultation.
+            </p>
+            <div className="bg-white/10 backdrop-blur rounded-2xl p-5 mb-6">
+              <h3 className="font-semibold text-white mb-3">What happens next?</h3>
+              <ul className="text-white/70 text-sm text-left space-y-2">
+                <li className="flex items-start gap-2">
+                  <svg className="w-5 h-5 text-white/50 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                  Your advisor will call to introduce themselves
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="w-5 h-5 text-white/50 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                  Schedule your free planning session
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="w-5 h-5 text-white/50 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                  No obligation - just helpful guidance
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -172,9 +188,19 @@ function FormModal({ isOpen, onClose }) {
           </svg>
         </button>
 
-        {/* Header */}
-        <div className="flex-shrink-0 px-5 py-4 border-b border-gray-100 flex items-center justify-center">
-          <Image src="/logo.png" alt="AssetPlanly" width={130} height={32} className="h-7 w-auto" />
+        {/* Header with logo and value prop */}
+        <div className="flex-shrink-0 px-5 pt-4 pb-3 border-b border-gray-100">
+          <div className="flex items-center justify-center mb-4">
+            <Image src="/logo.png" alt="AssetPlanly" width={130} height={32} className="h-7 w-auto" />
+          </div>
+          <div className="text-center">
+            <h1 className="text-lg sm:text-xl font-bold text-[#1e3a5f] mb-1">
+              Schedule Your Complimentary Fiduciary Advisor Meeting
+            </h1>
+            <p className="text-sm text-gray-500">
+              Clear next steps to protect and grow your wealth
+            </p>
+          </div>
         </div>
 
         {/* Progress bar */}
