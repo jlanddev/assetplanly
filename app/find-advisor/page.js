@@ -49,7 +49,46 @@ function FormModal({ isOpen, onClose }) {
     firstName: '', lastName: '', email: '', phone: '',
     whyNow: '', whyNowOther: '', whatYouWant: '', hasAdvisor: '', whyChanging: '',
     financialComplexity: '', investableAssets: '', zipCode: '',
+    selectedSlot: null, // { date: 'Today'/'Tomorrow', time: '10:00 AM', datetime: Date }
   });
+
+  const [availableSlots, setAvailableSlots] = useState({ today: [], tomorrow: [] });
+  const [loadingSlots, setLoadingSlots] = useState(false);
+
+  // Generate mock available slots for today and tomorrow
+  const generateTimeSlots = () => {
+    const now = new Date();
+    const today = new Date(now);
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const slots = { today: [], tomorrow: [] };
+    const times = ['9:00 AM', '10:00 AM', '11:00 AM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM'];
+
+    // For today, only show slots that are at least 1 hour from now
+    const currentHour = now.getHours();
+    times.forEach(time => {
+      const hour = parseInt(time.split(':')[0]) + (time.includes('PM') && !time.includes('12') ? 12 : 0);
+      if (hour > currentHour + 1) {
+        slots.today.push({ time, date: 'Today', dateObj: today });
+      }
+      slots.tomorrow.push({ time, date: 'Tomorrow', dateObj: tomorrow });
+    });
+
+    return slots;
+  };
+
+  // Load slots when reaching calendar step
+  useEffect(() => {
+    if (currentStep === 10) {
+      setLoadingSlots(true);
+      // Simulate API call - in production, fetch from /api/availability
+      setTimeout(() => {
+        setAvailableSlots(generateTimeSlots());
+        setLoadingSlots(false);
+      }, 500);
+    }
+  }, [currentStep]);
 
   const brandColor = '#1e3a5f';
 
@@ -105,6 +144,10 @@ function FormModal({ isOpen, onClose }) {
           whyChanging: formData.whyChanging,
           financialComplexity: formData.financialComplexity,
           investableAssets: formData.investableAssets,
+          selectedSlot: formData.selectedSlot ? {
+            date: formData.selectedSlot.date,
+            time: formData.selectedSlot.time,
+          } : null,
           source: 'consumer-find-advisor'
         }),
       });
@@ -136,7 +179,7 @@ function FormModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  const totalSteps = 9;
+  const totalSteps = 10; // Added calendar booking step
 
   // Success screen
   if (isSubmitted) {
@@ -168,7 +211,10 @@ function FormModal({ isOpen, onClose }) {
               You're All Set, {formData.firstName}!
             </h2>
             <p className="text-white/80 mb-8">
-              A qualified fiduciary advisor will reach out within 24 hours to schedule your complimentary consultation.
+              {formData.selectedSlot
+                ? `Your consultation is confirmed for ${formData.selectedSlot.date} at ${formData.selectedSlot.time}. A qualified fiduciary advisor will call you then.`
+                : 'Our advisors are in high demand. A qualified fiduciary advisor will call you within 24 hours.'
+              }
             </p>
             <div className="bg-white/10 backdrop-blur rounded-2xl p-5 mb-6">
               <h3 className="font-semibold text-white mb-3">What happens next?</h3>
@@ -421,13 +467,85 @@ function FormModal({ isOpen, onClose }) {
           {currentStep === 9 && (
             <div className="animate-slideLeft">
               <div className="text-center mb-6">
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Last step!</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Almost there!</h2>
                 <p className="text-gray-500 text-sm">What's your ZIP code?</p>
               </div>
               <input type="text" inputMode="numeric" value={formData.zipCode} maxLength={5}
                 onChange={(e) => setFormData(prev => ({ ...prev, zipCode: e.target.value.replace(/\D/g, '').slice(0, 5) }))}
                 placeholder="Enter ZIP" autoFocus
                 className="w-full px-5 py-4 text-2xl text-center border-2 border-gray-200 rounded-2xl focus:border-blue-500 outline-none tracking-widest font-medium" />
+            </div>
+          )}
+
+          {/* Step 10: Calendar Booking */}
+          {currentStep === 10 && (
+            <div className="animate-slideLeft">
+              <div className="text-center mb-5">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Pick a Time for Your Call</h2>
+                <p className="text-gray-500 text-sm">Choose a time that works for you</p>
+              </div>
+
+              {loadingSlots ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="w-8 h-8 border-2 border-[#1e3a5f] border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : (availableSlots.today.length === 0 && availableSlots.tomorrow.length === 0) ? (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-600 mb-2">Our advisors are in high demand!</p>
+                  <p className="text-gray-500 text-sm">We'll call you within 24 hours.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* Today's slots */}
+                  {availableSlots.today.length > 0 && (
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-700 mb-2">Today</h3>
+                      <div className="grid grid-cols-3 gap-2">
+                        {availableSlots.today.map((slot, i) => (
+                          <button
+                            key={`today-${i}`}
+                            onClick={() => setFormData(prev => ({ ...prev, selectedSlot: slot }))}
+                            className={`py-3 px-2 rounded-xl border-2 text-sm font-medium transition-all active:scale-[0.98] ${
+                              formData.selectedSlot?.time === slot.time && formData.selectedSlot?.date === 'Today'
+                                ? 'border-[#1e3a5f] bg-[#1e3a5f] text-white'
+                                : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                            }`}
+                          >
+                            {slot.time}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Tomorrow's slots */}
+                  {availableSlots.tomorrow.length > 0 && (
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-700 mb-2">Tomorrow</h3>
+                      <div className="grid grid-cols-3 gap-2">
+                        {availableSlots.tomorrow.map((slot, i) => (
+                          <button
+                            key={`tomorrow-${i}`}
+                            onClick={() => setFormData(prev => ({ ...prev, selectedSlot: slot }))}
+                            className={`py-3 px-2 rounded-xl border-2 text-sm font-medium transition-all active:scale-[0.98] ${
+                              formData.selectedSlot?.time === slot.time && formData.selectedSlot?.date === 'Tomorrow'
+                                ? 'border-[#1e3a5f] bg-[#1e3a5f] text-white'
+                                : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                            }`}
+                          >
+                            {slot.time}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
@@ -457,9 +575,17 @@ function FormModal({ isOpen, onClose }) {
           ) : currentStep === 9 ? (
             <div className="flex gap-3">
               <button onClick={handleBack} className="px-6 py-4 rounded-xl font-semibold text-gray-600 bg-gray-100 transition-all active:scale-[0.98]">Back</button>
-              <button onClick={handleSubmit} disabled={isSubmitting || formData.zipCode.length !== 5}
+              <button onClick={goToNext} disabled={formData.zipCode.length !== 5}
                 className="flex-1 py-4 rounded-xl font-semibold text-white transition-all disabled:opacity-40 active:scale-[0.98] bg-[#1e3a5f]">
-                {isSubmitting ? 'Submitting...' : 'Get My Advisor'}
+                Continue
+              </button>
+            </div>
+          ) : currentStep === 10 ? (
+            <div className="flex gap-3">
+              <button onClick={handleBack} className="px-6 py-4 rounded-xl font-semibold text-gray-600 bg-gray-100 transition-all active:scale-[0.98]">Back</button>
+              <button onClick={handleSubmit} disabled={isSubmitting || (!formData.selectedSlot && availableSlots.today.length + availableSlots.tomorrow.length > 0)}
+                className="flex-1 py-4 rounded-xl font-semibold text-white transition-all disabled:opacity-40 active:scale-[0.98] bg-[#1e3a5f]">
+                {isSubmitting ? 'Booking...' : formData.selectedSlot ? 'Confirm Booking' : 'Request Callback'}
               </button>
             </div>
           ) : currentStep > 1 && !(formData.whyNow === 'other' && currentStep === 3) ? (
