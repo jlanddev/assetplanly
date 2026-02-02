@@ -22,6 +22,29 @@ function FormModal({ isOpen, onClose }) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
 
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.top = `-${window.scrollY}px`;
+    } else {
+      const scrollY = document.body.style.top;
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.top = '';
+      window.scrollTo(0, parseInt(scrollY || '0') * -1);
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.top = '';
+    };
+  }, [isOpen]);
+
   const [formData, setFormData] = useState({
     firstName: '', lastName: '', email: '', phone: '',
     whyNow: '', whyNowOther: '', whatYouWant: '', hasAdvisor: '', whyChanging: '',
@@ -471,7 +494,7 @@ export default function FindAdvisorPage() {
   };
 
   return (
-    <div className={`min-h-screen bg-[#faf9f7] ${showForm ? 'overflow-hidden' : ''}`}>
+    <div className="min-h-screen bg-[#faf9f7]">
       {/* Form Modal */}
       <FormModal isOpen={showForm} onClose={() => setShowForm(false)} />
 
