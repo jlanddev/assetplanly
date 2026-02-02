@@ -4,37 +4,23 @@ import { useState, useEffect, Suspense } from 'react';
 import Link from "next/link";
 import Image from "next/image";
 
-// Email validation - checks format and blocks fake/disposable domains
+// Email validation
 const validateEmail = (email) => {
   if (!email) return { valid: false, error: 'Email is required' };
-
-  // Basic format check
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   if (!emailRegex.test(email)) {
     return { valid: false, error: 'Please enter a valid email address' };
   }
-
   const domain = email.split('@')[1].toLowerCase();
-
-  // Block disposable/temporary email domains
   const disposableDomains = [
     'tempmail.com', 'throwaway.com', 'guerrillamail.com', 'mailinator.com',
     'temp-mail.org', '10minutemail.com', 'fakeinbox.com', 'trashmail.com',
     'yopmail.com', 'sharklasers.com', 'getnada.com', 'tempail.com',
-    'emailondeck.com', 'mohmal.com', 'dispostable.com', 'maildrop.cc',
-    'getairmail.com', 'temp-mail.io', 'burnermail.io', 'spamgourmet.com'
+    'emailondeck.com', 'mohmal.com', 'dispostable.com', 'maildrop.cc'
   ];
-
   if (disposableDomains.includes(domain)) {
     return { valid: false, error: 'Please use a permanent email address' };
   }
-
-  // Check for obviously fake domains (no dot, too short, etc.)
-  const domainParts = domain.split('.');
-  if (domainParts.length < 2 || domainParts[0].length < 2 || domainParts[domainParts.length - 1].length < 2) {
-    return { valid: false, error: 'Please enter a valid email domain' };
-  }
-
   return { valid: true, error: null };
 };
 
@@ -46,64 +32,55 @@ function PlanFlow() {
   const [slideDirection, setSlideDirection] = useState('forward');
 
   const [formData, setFormData] = useState({
-    // Phase 1 - qualifying questions
-    zipCode: '',
+    // Contact info (collected first)
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    // Value-add questions (what do you need)
     whyNow: '',
     whyNowOther: '',
     whatYouWant: '',
     hasAdvisor: '',
     whyChanging: '',
+    // Qualifying questions (last)
     financialComplexity: '',
     investableAssets: '',
-    netWorth: '',
-    // Phase 2 - contact info
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
+    zipCode: '',
   });
 
   const brandColor = '#1e3a5f';
+
+  const goToNext = () => {
+    setSlideDirection('forward');
+    setTimeout(() => setCurrentStep(prev => prev + 1), 200);
+  };
 
   const handleSelect = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     setSlideDirection('forward');
 
-    // Determine next step
-    let nextStep = currentStep + 1;
-
-    // If user selects "no first time" for advisor, skip the whyChanging question
+    // Handle conditional skip for whyChanging
     if (field === 'hasAdvisor' && value === 'no-first-time') {
-      nextStep = currentStep + 2;
-    }
-
-    // Check if we've answered the last question - go to contact form
-    const lastQuestionStep = totalPhase1;
-    if (currentStep === lastQuestionStep || nextStep > lastQuestionStep) {
-      setTimeout(() => setCurrentStep(totalPhase1 + 1), 200);
+      // Skip whyChanging, go to next question
+      setTimeout(() => setCurrentStep(prev => prev + 2), 200);
     } else {
-      setTimeout(() => setCurrentStep(nextStep), 200);
+      setTimeout(() => setCurrentStep(prev => prev + 1), 200);
     }
   };
 
   const handleSkip = () => {
     setSlideDirection('forward');
-    const nextStep = currentStep + 1;
-    const lastQuestionStep = totalPhase1;
-    if (nextStep > lastQuestionStep) {
-      setCurrentStep(totalPhase1 + 1);
-    } else {
-      setCurrentStep(nextStep);
-    }
+    setCurrentStep(prev => prev + 1);
   };
 
   const handleBack = () => {
     setSlideDirection('back');
     let prevStep = currentStep - 1;
 
-    // If going back and user selected no-first-time, skip whyChanging
-    if (prevStep === 5 && formData.hasAdvisor === 'no-first-time') {
-      prevStep = 4;
+    // Skip whyChanging when going back if user said no-first-time
+    if (currentStep === 7 && formData.hasAdvisor === 'no-first-time') {
+      prevStep = 5; // Skip back over whyChanging
     }
 
     setTimeout(() => setCurrentStep(prevStep), 50);
@@ -122,7 +99,7 @@ function PlanFlow() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setIsSubmitting(true);
     setError('');
 
@@ -142,7 +119,6 @@ function PlanFlow() {
           whyChanging: formData.whyChanging,
           financialComplexity: formData.financialComplexity,
           investableAssets: formData.investableAssets,
-          netWorth: formData.netWorth,
           source: 'consumer-find-advisor'
         }),
       });
@@ -150,7 +126,7 @@ function PlanFlow() {
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || 'Failed to submit');
 
-      // Fire Google Ads lead conversion
+      // Fire Google Ads conversion
       if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
         window.gtag('event', 'conversion', {
           'send_to': 'AW-17733369236/on9LCMmR4sAbEJT79odC',
@@ -167,119 +143,39 @@ function PlanFlow() {
     }
   };
 
-  // Phase 1: Qualifying questions
-  const phase1Questions = [
-    {
-      key: 'whyNow',
-      title: "What brought you here today?",
-      hasOther: true,
-      gridCols: 1,
-      options: [
-        { value: 'closer-to-retirement', label: 'Getting closer to retirement' },
-        { value: 'recently-retired', label: 'Recently retired' },
-        { value: 'rollover', label: 'Rolling over a 401k or pension' },
-        { value: 'windfall', label: 'Came into money' },
-        { value: 'market-concerns', label: 'Concerned about the market' },
-        { value: 'need-plan', label: 'Want a clearer plan' },
-        { value: 'other', label: 'Other' },
-      ]
-    },
-    {
-      key: 'whatYouWant',
-      title: "What's most important to you?",
-      gridCols: 2,
-      options: [
-        { value: 'retirement-confidence', label: 'Retirement confidence' },
-        { value: 'grow-wealth', label: 'Grow wealth' },
-        { value: 'protect-wealth', label: 'Protect wealth' },
-        { value: 'reduce-taxes', label: 'Reduce taxes' },
-        { value: 'family-legacy', label: 'Family & legacy' },
-        { value: 'everything', label: 'All of the above' },
-      ]
-    },
-    {
-      key: 'hasAdvisor',
-      title: "Do you have a financial advisor?",
-      gridCols: 1,
-      hasFollowUp: true,
-      options: [
-        { value: 'no-first-time', label: 'No, this would be my first' },
-        { value: 'yes-considering-change', label: 'Yes, but considering a change' },
-        { value: 'yes-second-opinion', label: 'Yes, want a second opinion' },
-      ]
-    },
-    {
-      key: 'whyChanging',
-      title: "What's making you consider a change?",
-      subtitle: 'Optional',
-      conditional: true,
-      isTextArea: true,
-      optional: true,
-    },
-    {
-      key: 'financialComplexity',
-      title: "How complex is your financial situation?",
-      gridCols: 1,
-      options: [
-        { value: 'simple', label: 'Pretty straightforward' },
-        { value: 'moderate', label: 'Somewhat complex' },
-        { value: 'complex', label: 'Quite complex' },
-      ]
-    },
-    {
-      key: 'investableAssets',
-      title: "Roughly how much do you have to invest?",
-      subtitle: 'Not including your home',
-      gridCols: 2,
-      options: [
-        { value: 'under-50k', label: 'Under $50k' },
-        { value: '50k-150k', label: '$50k - $150k' },
-        { value: '150k-500k', label: '$150k - $500k' },
-        { value: '500k-1m', label: '$500k - $1M' },
-        { value: '1m-5m', label: '$1M - $5M' },
-        { value: '5m+', label: '$5M+' },
-      ]
-    },
-    {
-      key: 'netWorth',
-      title: "What's your approximate net worth?",
-      subtitle: 'Optional - including real estate',
-      optional: true,
-      gridCols: 2,
-      options: [
-        { value: 'under-500k', label: 'Under $500k' },
-        { value: '500k-1m', label: '$500k - $1M' },
-        { value: '1m-5m', label: '$1M - $5M' },
-        { value: '5m-10m', label: '$5M - $10M' },
-        { value: '10m+', label: '$10M+' },
-        { value: 'prefer-not', label: 'Prefer not to say' },
-      ]
-    },
-  ];
-
-  const totalPhase1 = 1 + phase1Questions.length; // zip + questions
-  const totalSteps = totalPhase1 + 1; // +1 for contact
-
-  const isZipStep = currentStep === 1;
-  const isQuestionStep = currentStep > 1 && currentStep <= totalPhase1;
-  const isContactStep = currentStep > totalPhase1;
-
-  const currentQuestion = isQuestionStep
-    ? phase1Questions[currentStep - 2]
-    : null;
-
-  // Skip conditional questions that don't apply
-  const shouldSkipCurrentQuestion = currentQuestion?.conditional &&
-    currentQuestion.key === 'whyChanging' && formData.hasAdvisor === 'no-first-time';
-
-  // Auto-skip conditional questions
+  // Auto-skip whyChanging if user selected no-first-time
   useEffect(() => {
-    if (shouldSkipCurrentQuestion) {
-      setCurrentStep(prev => prev + 1);
+    if (currentStep === 6 && formData.hasAdvisor === 'no-first-time') {
+      setCurrentStep(7);
     }
-  }, [shouldSkipCurrentQuestion]);
+  }, [currentStep, formData.hasAdvisor]);
 
-  // Success screen - generic messaging, AssetPlanly branding only
+  /*
+    NEW FLOW ORDER:
+    1. Contact info (name)
+    2. Contact info (email + phone)
+    3. What brought you here? (value-add)
+    4. What's most important to you? (value-add)
+    5. Do you have an advisor? (value-add)
+    6. Why changing? (conditional, optional)
+    7. How complex is your situation? (qualifying)
+    8. How much to invest? (qualifying)
+    9. ZIP code (qualifying - last)
+    -> Submit
+  */
+
+  const totalSteps = 9;
+  const isContactStep1 = currentStep === 1;
+  const isContactStep2 = currentStep === 2;
+  const isWhyNowStep = currentStep === 3;
+  const isWhatYouWantStep = currentStep === 4;
+  const isHasAdvisorStep = currentStep === 5;
+  const isWhyChangingStep = currentStep === 6;
+  const isComplexityStep = currentStep === 7;
+  const isAssetsStep = currentStep === 8;
+  const isZipStep = currentStep === 9;
+
+  // Success screen
   if (isSubmitted) {
     return (
       <div className="fixed inset-0 flex items-center justify-center p-4 bg-[#1e3a5f]">
@@ -291,7 +187,7 @@ function PlanFlow() {
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-            You're All Set!
+            You're All Set, {formData.firstName}!
           </h1>
 
           <p className="text-white/80 mb-8">
@@ -305,13 +201,13 @@ function PlanFlow() {
                 <svg className="w-5 h-5 text-white/50 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                Your advisor will call you to introduce themselves
+                Your advisor will call to introduce themselves
               </li>
               <li className="flex items-start gap-2">
                 <svg className="w-5 h-5 text-white/50 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                Schedule a time for your free planning session
+                Schedule your free planning session
               </li>
               <li className="flex items-start gap-2">
                 <svg className="w-5 h-5 text-white/50 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
@@ -328,12 +224,11 @@ function PlanFlow() {
     );
   }
 
-  // Modal Form Layout - AssetPlanly branding only throughout
   return (
     <div className="fixed inset-0 bg-slate-100 sm:bg-slate-900/60 sm:backdrop-blur-sm flex items-center justify-center sm:p-4">
       <div className="bg-white sm:rounded-3xl shadow-2xl w-full sm:max-w-lg h-full sm:h-auto sm:max-h-[85vh] flex flex-col overflow-hidden animate-slideUp">
 
-        {/* Header - always AssetPlanly branding */}
+        {/* Header */}
         <div className="flex-shrink-0 px-5 py-4 border-b border-gray-100 flex items-center justify-center">
           <Image src="/logo.png" alt="AssetPlanly" width={130} height={32} className="h-7 w-auto" />
         </div>
@@ -346,70 +241,122 @@ function PlanFlow() {
           />
         </div>
 
-        {/* Scrollable content area */}
+        {/* Content */}
         <div className="flex-1 overflow-y-auto px-5 py-6 sm:px-6 sm:py-8">
 
-          {/* ZIP Code Step */}
-          {isZipStep && (
-            <div className={`animate-${slideDirection === 'forward' ? 'slideLeft' : 'slideRight'}`}>
+          {/* Step 1: Name */}
+          {isContactStep1 && (
+            <div className="animate-slideLeft">
               <div className="text-center mb-6">
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
-                  What's your ZIP code?
+                  Let's get started
                 </h2>
-                <p className="text-gray-500 text-sm">Helps us find advisors near you</p>
+                <p className="text-gray-500 text-sm">What's your name?</p>
               </div>
 
-              <input
-                type="text"
-                inputMode="numeric"
-                value={formData.zipCode}
-                onChange={(e) => setFormData(prev => ({ ...prev, zipCode: e.target.value.replace(/\D/g, '').slice(0, 5) }))}
-                placeholder="Enter ZIP"
-                className="w-full px-5 py-4 text-2xl text-center border-2 border-gray-200 rounded-2xl focus:border-blue-500 focus:ring-0 outline-none tracking-widest font-medium"
-                maxLength={5}
-                autoFocus
-              />
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">First Name</label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none"
+                    autoFocus
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Last Name</label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none"
+                  />
+                </div>
+              </div>
             </div>
           )}
 
-          {/* Question Steps */}
-          {currentQuestion && !currentQuestion.isTextArea && (
-            <div key={currentStep} className={`animate-${slideDirection === 'forward' ? 'slideLeft' : 'slideRight'}`}>
-              <div className="text-center mb-5">
+          {/* Step 2: Email + Phone */}
+          {isContactStep2 && (
+            <div className="animate-slideLeft">
+              <div className="text-center mb-6">
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
-                  {currentQuestion.title}
+                  Hi {formData.firstName}!
                 </h2>
-                {currentQuestion.subtitle && (
-                  <p className="text-gray-500 text-sm">{currentQuestion.subtitle}</p>
-                )}
+                <p className="text-gray-500 text-sm">How can we reach you?</p>
               </div>
 
-              {/* Options grid */}
-              <div className={`grid gap-2.5 ${currentQuestion.gridCols === 2 ? 'grid-cols-2' : 'grid-cols-1'}`}>
-                {currentQuestion.options?.map((opt) => (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none"
+                    autoFocus
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Phone</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={(e) => setFormData(prev => ({ ...prev, phone: formatPhone(e.target.value) }))}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none"
+                    placeholder="(555) 123-4567"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: What brought you here? */}
+          {isWhyNowStep && (
+            <div className="animate-slideLeft">
+              <div className="text-center mb-5">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
+                  What brought you here today?
+                </h2>
+              </div>
+
+              <div className="grid gap-2.5">
+                {[
+                  { value: 'closer-to-retirement', label: 'Getting closer to retirement' },
+                  { value: 'recently-retired', label: 'Recently retired' },
+                  { value: 'rollover', label: 'Rolling over a 401k or pension' },
+                  { value: 'windfall', label: 'Came into money' },
+                  { value: 'market-concerns', label: 'Concerned about the market' },
+                  { value: 'need-plan', label: 'Want a clearer plan' },
+                  { value: 'other', label: 'Other' },
+                ].map((opt) => (
                   <button
                     key={opt.value}
                     onClick={() => {
-                      if (opt.value === 'other' && currentQuestion.hasOther) {
-                        setFormData(prev => ({ ...prev, [currentQuestion.key]: 'other' }));
+                      if (opt.value === 'other') {
+                        setFormData(prev => ({ ...prev, whyNow: 'other' }));
                       } else {
-                        handleSelect(currentQuestion.key, opt.value);
+                        handleSelect('whyNow', opt.value);
                       }
                     }}
                     className={`p-4 rounded-xl border-2 transition-all text-left font-medium active:scale-[0.98] ${
-                      formData[currentQuestion.key] === opt.value
-                        ? 'border-blue-500 bg-blue-50 text-blue-900'
+                      formData.whyNow === opt.value
+                        ? 'border-[#1e3a5f] bg-[#1e3a5f]/10'
                         : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
                     }`}
-                    style={formData[currentQuestion.key] === opt.value ? { borderColor: brandColor, backgroundColor: `${brandColor}10` } : {}}
                   >
                     {opt.label}
                   </button>
                 ))}
               </div>
 
-              {/* "Other" text input */}
-              {currentQuestion.hasOther && formData[currentQuestion.key] === 'other' && (
+              {formData.whyNow === 'other' && (
                 <div className="mt-3">
                   <input
                     type="text"
@@ -420,10 +367,9 @@ function PlanFlow() {
                     autoFocus
                   />
                   <button
-                    onClick={() => handleSelect(currentQuestion.key, 'other')}
+                    onClick={() => handleSelect('whyNow', 'other')}
                     disabled={!formData.whyNowOther}
-                    className="w-full mt-3 py-3 rounded-xl font-semibold text-white transition disabled:opacity-50"
-                    style={{ backgroundColor: brandColor }}
+                    className="w-full mt-3 py-3 rounded-xl font-semibold text-white transition disabled:opacity-50 bg-[#1e3a5f]"
                   >
                     Continue
                   </button>
@@ -432,21 +378,84 @@ function PlanFlow() {
             </div>
           )}
 
-          {/* Text area question (whyChanging) */}
-          {currentQuestion?.isTextArea && (
-            <div className={`animate-${slideDirection === 'forward' ? 'slideLeft' : 'slideRight'}`}>
+          {/* Step 4: What's most important? */}
+          {isWhatYouWantStep && (
+            <div className="animate-slideLeft">
               <div className="text-center mb-5">
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
-                  {currentQuestion.title}
+                  What's most important to you?
                 </h2>
-                {currentQuestion.subtitle && (
-                  <p className="text-gray-500 text-sm">{currentQuestion.subtitle}</p>
-                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                {[
+                  { value: 'retirement-confidence', label: 'Retirement confidence' },
+                  { value: 'grow-wealth', label: 'Grow wealth' },
+                  { value: 'protect-wealth', label: 'Protect wealth' },
+                  { value: 'reduce-taxes', label: 'Reduce taxes' },
+                  { value: 'family-legacy', label: 'Family & legacy' },
+                  { value: 'everything', label: 'All of the above' },
+                ].map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => handleSelect('whatYouWant', opt.value)}
+                    className={`p-4 rounded-xl border-2 transition-all text-left font-medium active:scale-[0.98] ${
+                      formData.whatYouWant === opt.value
+                        ? 'border-[#1e3a5f] bg-[#1e3a5f]/10'
+                        : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Step 5: Do you have an advisor? */}
+          {isHasAdvisorStep && (
+            <div className="animate-slideLeft">
+              <div className="text-center mb-5">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
+                  Do you have a financial advisor?
+                </h2>
+              </div>
+
+              <div className="grid gap-2.5">
+                {[
+                  { value: 'no-first-time', label: 'No, this would be my first' },
+                  { value: 'yes-considering-change', label: 'Yes, but considering a change' },
+                  { value: 'yes-second-opinion', label: 'Yes, want a second opinion' },
+                ].map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => handleSelect('hasAdvisor', opt.value)}
+                    className={`p-4 rounded-xl border-2 transition-all text-left font-medium active:scale-[0.98] ${
+                      formData.hasAdvisor === opt.value
+                        ? 'border-[#1e3a5f] bg-[#1e3a5f]/10'
+                        : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Step 6: Why changing? (conditional) */}
+          {isWhyChangingStep && (
+            <div className="animate-slideLeft">
+              <div className="text-center mb-5">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
+                  What's making you consider a change?
+                </h2>
+                <p className="text-gray-500 text-sm">Optional</p>
               </div>
 
               <textarea
-                value={formData[currentQuestion.key]}
-                onChange={(e) => setFormData(prev => ({ ...prev, [currentQuestion.key]: e.target.value }))}
+                value={formData.whyChanging}
+                onChange={(e) => setFormData(prev => ({ ...prev, whyChanging: e.target.value }))}
                 placeholder="Share your thoughts..."
                 rows={3}
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none resize-none"
@@ -454,91 +463,151 @@ function PlanFlow() {
             </div>
           )}
 
-          {/* Contact Form */}
-          {isContactStep && (
+          {/* Step 7: Financial complexity */}
+          {isComplexityStep && (
             <div className="animate-slideLeft">
               <div className="text-center mb-5">
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
-                  Almost there!
+                  How complex is your financial situation?
                 </h2>
-                <p className="text-gray-500 text-sm">
-                  Enter your details and a qualified advisor will reach out
-                </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">First Name</label>
-                    <input
-                      type="text"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Last Name</label>
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none text-sm"
-                    />
-                  </div>
-                </div>
+              <div className="grid gap-2.5">
+                {[
+                  { value: 'simple', label: 'Pretty straightforward' },
+                  { value: 'moderate', label: 'Somewhat complex' },
+                  { value: 'complex', label: 'Quite complex' },
+                ].map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => handleSelect('financialComplexity', opt.value)}
+                    className={`p-4 rounded-xl border-2 transition-all text-left font-medium active:scale-[0.98] ${
+                      formData.financialComplexity === opt.value
+                        ? 'border-[#1e3a5f] bg-[#1e3a5f]/10'
+                        : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none text-sm"
-                  />
-                </div>
+          {/* Step 8: Investable assets */}
+          {isAssetsStep && (
+            <div className="animate-slideLeft">
+              <div className="text-center mb-5">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
+                  Roughly how much do you have to invest?
+                </h2>
+                <p className="text-gray-500 text-sm">Not including your home</p>
+              </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Phone</label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={(e) => setFormData(prev => ({ ...prev, phone: formatPhone(e.target.value) }))}
-                    required
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none text-sm"
-                    placeholder="(555) 123-4567"
-                  />
-                </div>
+              <div className="grid grid-cols-2 gap-2.5">
+                {[
+                  { value: 'under-50k', label: 'Under $50k' },
+                  { value: '50k-150k', label: '$50k - $150k' },
+                  { value: '150k-500k', label: '$150k - $500k' },
+                  { value: '500k-1m', label: '$500k - $1M' },
+                  { value: '1m-5m', label: '$1M - $5M' },
+                  { value: '5m+', label: '$5M+' },
+                ].map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => handleSelect('investableAssets', opt.value)}
+                    className={`p-4 rounded-xl border-2 transition-all text-left font-medium active:scale-[0.98] ${
+                      formData.investableAssets === opt.value
+                        ? 'border-[#1e3a5f] bg-[#1e3a5f]/10'
+                        : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
-                {error && (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
-                    {error}
-                  </div>
-                )}
-              </form>
+          {/* Step 9: ZIP Code */}
+          {isZipStep && (
+            <div className="animate-slideLeft">
+              <div className="text-center mb-6">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
+                  Last step!
+                </h2>
+                <p className="text-gray-500 text-sm">What's your ZIP code?</p>
+              </div>
+
+              <input
+                type="text"
+                inputMode="numeric"
+                value={formData.zipCode}
+                onChange={(e) => setFormData(prev => ({ ...prev, zipCode: e.target.value.replace(/\D/g, '').slice(0, 5) }))}
+                placeholder="Enter ZIP"
+                className="w-full px-5 py-4 text-2xl text-center border-2 border-gray-200 rounded-2xl focus:border-blue-500 outline-none tracking-widest font-medium"
+                maxLength={5}
+                autoFocus
+              />
+            </div>
+          )}
+
+          {error && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+              {error}
             </div>
           )}
         </div>
 
-        {/* Fixed bottom buttons */}
+        {/* Bottom buttons */}
         <div className="flex-shrink-0 px-5 py-4 sm:px-6 sm:py-5 border-t border-gray-100 bg-white">
-          {isZipStep ? (
+          {isContactStep1 ? (
             <button
-              onClick={() => { setSlideDirection('forward'); setCurrentStep(2); }}
-              disabled={formData.zipCode.length !== 5}
-              className="w-full py-4 rounded-xl font-semibold text-white transition-all disabled:opacity-40 active:scale-[0.98]"
-              style={{ backgroundColor: brandColor }}
+              onClick={goToNext}
+              disabled={!formData.firstName || !formData.lastName}
+              className="w-full py-4 rounded-xl font-semibold text-white transition-all disabled:opacity-40 active:scale-[0.98] bg-[#1e3a5f]"
             >
               Continue
             </button>
-          ) : isContactStep ? (
+          ) : isContactStep2 ? (
+            <div className="flex gap-3">
+              <button
+                onClick={handleBack}
+                className="px-6 py-4 rounded-xl font-semibold text-gray-600 bg-gray-100 transition-all active:scale-[0.98]"
+              >
+                Back
+              </button>
+              <button
+                onClick={goToNext}
+                disabled={!formData.email || !formData.phone || !validateEmail(formData.email).valid}
+                className="flex-1 py-4 rounded-xl font-semibold text-white transition-all disabled:opacity-40 active:scale-[0.98] bg-[#1e3a5f]"
+              >
+                Continue
+              </button>
+            </div>
+          ) : isWhyChangingStep ? (
+            <div className="flex gap-3">
+              <button
+                onClick={handleBack}
+                className="px-6 py-4 rounded-xl font-semibold text-gray-600 bg-gray-100 transition-all active:scale-[0.98]"
+              >
+                Back
+              </button>
+              <button
+                onClick={handleSkip}
+                className="flex-1 py-4 rounded-xl font-semibold text-gray-600 bg-gray-100 transition-all active:scale-[0.98]"
+              >
+                Skip
+              </button>
+              <button
+                onClick={goToNext}
+                disabled={!formData.whyChanging}
+                className="flex-1 py-4 rounded-xl font-semibold text-white transition-all disabled:opacity-40 active:scale-[0.98] bg-[#1e3a5f]"
+              >
+                Continue
+              </button>
+            </div>
+          ) : isZipStep ? (
             <div className="flex gap-3">
               <button
                 onClick={handleBack}
@@ -548,52 +617,13 @@ function PlanFlow() {
               </button>
               <button
                 onClick={handleSubmit}
-                disabled={isSubmitting || !formData.firstName || !formData.email || !formData.phone || !validateEmail(formData.email).valid}
-                className="flex-1 py-4 rounded-xl font-semibold text-white transition-all disabled:opacity-40 active:scale-[0.98]"
-                style={{ backgroundColor: brandColor }}
+                disabled={isSubmitting || formData.zipCode.length !== 5}
+                className="flex-1 py-4 rounded-xl font-semibold text-white transition-all disabled:opacity-40 active:scale-[0.98] bg-[#1e3a5f]"
               >
                 {isSubmitting ? 'Submitting...' : 'Get My Advisor'}
               </button>
             </div>
-          ) : currentQuestion?.isTextArea ? (
-            <div className="flex gap-3">
-              <button
-                onClick={handleBack}
-                className="px-6 py-4 rounded-xl font-semibold text-gray-600 bg-gray-100 transition-all active:scale-[0.98]"
-              >
-                Back
-              </button>
-              <button
-                onClick={handleSkip}
-                className="flex-1 py-4 rounded-xl font-semibold text-gray-600 bg-gray-100 transition-all active:scale-[0.98]"
-              >
-                Skip
-              </button>
-              <button
-                onClick={() => handleSelect(currentQuestion.key, formData[currentQuestion.key])}
-                disabled={!formData[currentQuestion.key]}
-                className="flex-1 py-4 rounded-xl font-semibold text-white transition-all disabled:opacity-40 active:scale-[0.98]"
-                style={{ backgroundColor: brandColor }}
-              >
-                Continue
-              </button>
-            </div>
-          ) : currentQuestion?.optional && !currentQuestion.hasOther ? (
-            <div className="flex gap-3">
-              <button
-                onClick={handleBack}
-                className="px-6 py-4 rounded-xl font-semibold text-gray-600 bg-gray-100 transition-all active:scale-[0.98]"
-              >
-                Back
-              </button>
-              <button
-                onClick={handleSkip}
-                className="flex-1 py-4 rounded-xl font-semibold text-gray-600 bg-gray-100 transition-all active:scale-[0.98]"
-              >
-                Skip
-              </button>
-            </div>
-          ) : currentStep > 1 && !(currentQuestion?.hasOther && formData[currentQuestion?.key] === 'other') ? (
+          ) : currentStep > 1 && !(formData.whyNow === 'other' && isWhyNowStep) ? (
             <button
               onClick={handleBack}
               className="w-full py-4 rounded-xl font-semibold text-gray-600 bg-gray-100 transition-all active:scale-[0.98]"
@@ -602,10 +632,9 @@ function PlanFlow() {
             </button>
           ) : null}
 
-          {/* Terms footer on contact step */}
-          {isContactStep && (
+          {currentStep === 1 && (
             <p className="text-xs text-gray-400 text-center mt-3">
-              By submitting, you agree to our <Link href="/terms" className="underline">Terms</Link> and <Link href="/privacy" className="underline">Privacy Policy</Link>
+              By continuing, you agree to our <Link href="/terms" className="underline">Terms</Link> and <Link href="/privacy" className="underline">Privacy Policy</Link>
             </p>
           )}
         </div>
