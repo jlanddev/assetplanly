@@ -442,8 +442,8 @@ function FormModal({ isOpen, onClose }) {
           {currentStep === 8 && (
             <div className="animate-slideLeft">
               <div className="text-center mb-5">
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Roughly how much do you have to invest?</h2>
-                <p className="text-gray-500 text-sm">Not including your home</p>
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">What are your total savings and investments?</h2>
+                <p className="text-gray-500 text-sm">401(k), IRA, brokerage, savings. Not including your home.</p>
               </div>
               <div className="grid grid-cols-2 gap-2.5">
                 {[
