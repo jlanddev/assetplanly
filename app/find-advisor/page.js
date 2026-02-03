@@ -52,41 +52,52 @@ function FormModal({ isOpen, onClose }) {
     selectedSlot: null, // { date: 'Today'/'Tomorrow', time: '10:00 AM', datetime: Date }
   });
 
-  const [availableSlots, setAvailableSlots] = useState({ today: [], tomorrow: [] });
+  const [availableSlots, setAvailableSlots] = useState({ today: [], tomorrow: [], upcoming: [] });
   const [loadingSlots, setLoadingSlots] = useState(false);
 
-  // Generate mock available slots for today and tomorrow
-  const generateTimeSlots = () => {
-    const now = new Date();
-    const today = new Date(now);
-    const tomorrow = new Date(now);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+  // Fetch real availability from API
+  const fetchAvailability = async () => {
+    try {
+      const response = await fetch('/api/availability?days=7');
+      const data = await response.json();
 
-    const slots = { today: [], tomorrow: [] };
-    const times = ['9:00 AM', '10:00 AM', '11:00 AM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM'];
+      if (data.success && data.availableSlots) {
+        const slots = { today: [], tomorrow: [], upcoming: [] };
 
-    // For today, only show slots that are at least 1 hour from now
-    const currentHour = now.getHours();
-    times.forEach(time => {
-      const hour = parseInt(time.split(':')[0]) + (time.includes('PM') && !time.includes('12') ? 12 : 0);
-      if (hour > currentHour + 1) {
-        slots.today.push({ time, date: 'Today', dateObj: today });
+        data.availableSlots.forEach(day => {
+          const daySlots = day.slots.map(slot => ({
+            time: slot.display,
+            date: day.isToday ? 'Today' : day.isTomorrow ? 'Tomorrow' : day.displayDate,
+            datetime: slot.datetime,
+            dayName: day.dayName
+          }));
+
+          if (day.isToday) {
+            slots.today = daySlots;
+          } else if (day.isTomorrow) {
+            slots.tomorrow = daySlots;
+          } else {
+            slots.upcoming.push(...daySlots);
+          }
+        });
+
+        return slots;
       }
-      slots.tomorrow.push({ time, date: 'Tomorrow', dateObj: tomorrow });
-    });
-
-    return slots;
+      return { today: [], tomorrow: [], upcoming: [] };
+    } catch (error) {
+      console.error('Error fetching availability:', error);
+      return { today: [], tomorrow: [], upcoming: [] };
+    }
   };
 
   // Load slots when reaching calendar step
   useEffect(() => {
     if (currentStep === 10) {
       setLoadingSlots(true);
-      // Simulate API call - in production, fetch from /api/availability
-      setTimeout(() => {
-        setAvailableSlots(generateTimeSlots());
+      fetchAvailability().then(slots => {
+        setAvailableSlots(slots);
         setLoadingSlots(false);
-      }, 500);
+      });
     }
   }, [currentStep]);
 
@@ -144,6 +155,7 @@ function FormModal({ isOpen, onClose }) {
           whyChanging: formData.whyChanging,
           financialComplexity: formData.financialComplexity,
           investableAssets: formData.investableAssets,
+          scheduledAt: formData.selectedSlot?.datetime || null,
           selectedSlot: formData.selectedSlot ? {
             date: formData.selectedSlot.date,
             time: formData.selectedSlot.time,
@@ -489,7 +501,7 @@ function FormModal({ isOpen, onClose }) {
                 <div className="flex items-center justify-center py-12">
                   <div className="w-8 h-8 border-2 border-[#1e3a5f] border-t-transparent rounded-full animate-spin" />
                 </div>
-              ) : (availableSlots.today.length === 0 && availableSlots.tomorrow.length === 0) ? (
+              ) : (availableSlots.today.length === 0 && availableSlots.tomorrow.length === 0 && availableSlots.upcoming.length === 0) ? (
                 <div className="text-center py-8">
                   <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -500,7 +512,7 @@ function FormModal({ isOpen, onClose }) {
                   <p className="text-gray-500 text-sm">We'll call you within 24 hours.</p>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-4 max-h-[350px] overflow-y-auto">
                   {/* Today's slots */}
                   {availableSlots.today.length > 0 && (
                     <div>
@@ -511,7 +523,7 @@ function FormModal({ isOpen, onClose }) {
                             key={`today-${i}`}
                             onClick={() => setFormData(prev => ({ ...prev, selectedSlot: slot }))}
                             className={`py-3 px-2 rounded-xl border-2 text-sm font-medium transition-all active:scale-[0.98] ${
-                              formData.selectedSlot?.time === slot.time && formData.selectedSlot?.date === 'Today'
+                              formData.selectedSlot?.datetime === slot.datetime
                                 ? 'border-[#1e3a5f] bg-[#1e3a5f] text-white'
                                 : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
                             }`}
@@ -533,13 +545,49 @@ function FormModal({ isOpen, onClose }) {
                             key={`tomorrow-${i}`}
                             onClick={() => setFormData(prev => ({ ...prev, selectedSlot: slot }))}
                             className={`py-3 px-2 rounded-xl border-2 text-sm font-medium transition-all active:scale-[0.98] ${
-                              formData.selectedSlot?.time === slot.time && formData.selectedSlot?.date === 'Tomorrow'
+                              formData.selectedSlot?.datetime === slot.datetime
                                 ? 'border-[#1e3a5f] bg-[#1e3a5f] text-white'
                                 : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
                             }`}
                           >
                             {slot.time}
                           </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Upcoming days */}
+                  {availableSlots.upcoming.length > 0 && (
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-700 mb-2">More Times</h3>
+                      <div className="space-y-3">
+                        {/* Group by date */}
+                        {Object.entries(
+                          availableSlots.upcoming.reduce((acc, slot) => {
+                            if (!acc[slot.date]) acc[slot.date] = [];
+                            acc[slot.date].push(slot);
+                            return acc;
+                          }, {})
+                        ).map(([date, slots]) => (
+                          <div key={date}>
+                            <p className="text-xs text-gray-500 mb-1.5">{date}</p>
+                            <div className="grid grid-cols-3 gap-2">
+                              {slots.map((slot, i) => (
+                                <button
+                                  key={`upcoming-${date}-${i}`}
+                                  onClick={() => setFormData(prev => ({ ...prev, selectedSlot: slot }))}
+                                  className={`py-3 px-2 rounded-xl border-2 text-sm font-medium transition-all active:scale-[0.98] ${
+                                    formData.selectedSlot?.datetime === slot.datetime
+                                      ? 'border-[#1e3a5f] bg-[#1e3a5f] text-white'
+                                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                                  }`}
+                                >
+                                  {slot.time}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -583,7 +631,7 @@ function FormModal({ isOpen, onClose }) {
           ) : currentStep === 10 ? (
             <div className="flex gap-3">
               <button onClick={handleBack} className="px-6 py-4 rounded-xl font-semibold text-gray-600 bg-gray-100 transition-all active:scale-[0.98]">Back</button>
-              <button onClick={handleSubmit} disabled={isSubmitting || (!formData.selectedSlot && availableSlots.today.length + availableSlots.tomorrow.length > 0)}
+              <button onClick={handleSubmit} disabled={isSubmitting || (!formData.selectedSlot && (availableSlots.today.length + availableSlots.tomorrow.length + availableSlots.upcoming.length) > 0)}
                 className="flex-1 py-4 rounded-xl font-semibold text-white transition-all disabled:opacity-40 active:scale-[0.98] bg-[#1e3a5f]">
                 {isSubmitting ? 'Booking...' : formData.selectedSlot ? 'Confirm Booking' : 'Request Callback'}
               </button>
