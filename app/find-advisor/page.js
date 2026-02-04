@@ -714,9 +714,9 @@ export default function FindAdvisorPage() {
             </div>
           </div>
         </div>
-        <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 hidden lg:block z-10 pointer-events-none"
+        <div className="absolute right-0 top-0 bottom-0 hidden lg:block z-0 pointer-events-none"
           style={{ maskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 100%)' }}>
-          <img src="/paper-airplane.png" alt="" className="h-full w-auto object-contain object-bottom" style={{ transform: 'scaleY(-1)' }} />
+          <img src="/paper-airplane.png" alt="" className="h-full w-auto object-contain object-bottom" style={{ transform: 'scaleY(-1) translateX(20%)' }} />
         </div>
       </section>
 
