@@ -204,10 +204,10 @@ function FormModal({ isOpen, onClose }) {
           </div>
           <div className="text-center">
             <h1 className="text-lg sm:text-xl font-bold text-[#1e3a5f] mb-1">
-              Schedule Your Complimentary Fiduciary Advisor Meeting
+              Find Your Perfect Advisor Match
             </h1>
             <p className="text-sm text-gray-500">
-              Clear next steps to protect and grow your wealth
+              Free, no-pressure consultation packed with real advice
             </p>
           </div>
         </div>
@@ -276,10 +276,10 @@ function FormModal({ isOpen, onClose }) {
           </div>
           <div className="text-center">
             <h1 className="text-lg sm:text-xl font-bold text-[#1e3a5f] mb-1">
-              Schedule Your Complimentary Fiduciary Advisor Meeting
+              Find Your Perfect Advisor Match
             </h1>
             <p className="text-sm text-gray-500">
-              Clear next steps to protect and grow your wealth
+              Free, no-pressure consultation packed with real advice
             </p>
           </div>
         </div>
@@ -702,7 +702,7 @@ export default function FindAdvisorPage() {
                 Get Matched With a Top <span className="text-[#1e3a5f]">Financial Advisor</span> for Your Goals
               </h1>
               <p className="text-base lg:text-lg text-slate-600 mb-6 lg:mb-8">
-                Takes 60 seconds. Free. No obligation.
+                Get a free, no-pressure consultation packed with real, helpful advice.
               </p>
               <button onClick={handleGetStarted} className="inline-block bg-[#e5b94e] text-slate-900 px-6 lg:px-8 py-3 lg:py-4 rounded-lg font-semibold text-base lg:text-lg hover:bg-[#d4a93d] transition-all cursor-pointer">
                 Find My Match
