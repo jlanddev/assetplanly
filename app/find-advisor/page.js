@@ -699,9 +699,7 @@ export default function FindAdvisorPage() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:min-h-[550px] py-8 lg:py-12">
             <div className="max-w-xl relative z-10">
               <h1 className="text-3xl md:text-5xl lg:text-[56px] font-bold text-slate-900 leading-[1.08] mb-4 lg:mb-6">
-                Get Matched With a Top{' '}
-                <span className="text-[#1e3a5f]">Financial Advisor</span>{' '}
-                for Your Goals
+                Get Matched With a Top <span className="text-[#1e3a5f]">Financial Advisor</span> for Your Goals
               </h1>
               <p className="text-base lg:text-lg text-slate-600 mb-6 lg:mb-8">
                 Takes 60 seconds. Free. No obligation.
