@@ -531,61 +531,135 @@ export default function FindAdvisorPage() {
             </div>
           </div>
         </div>
-        <div className="flex-shrink-0 px-5 pt-4 pb-3 bg-white">
-          <div className="flex items-center justify-center mb-4">
-            <Image src="/logo.png" alt="AssetPlanly" width={130} height={32} className="h-7 w-auto" />
-          </div>
-          <div className="text-center">
-            <h1 className="text-lg sm:text-xl font-bold text-[#1e3a5f] mb-1">
-              Find Your Perfect Advisor Match
-            </h1>
-            <p className="text-sm text-gray-500">
-              Free, no-pressure consultation packed with real advice
-            </p>
+        <div className="absolute left-[45%] top-0 bottom-0 hidden lg:block z-0 pointer-events-none"
+          style={{ maskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 100%)' }}>
+          <img src="/paper-airplane.png" alt="" className="h-full w-auto object-contain object-bottom" style={{ transform: 'scaleY(-1)' }} />
+        </div>
+      </section>
+
+      {/* As featured in */}
+      <section className="py-6 px-6 bg-[#f5f3ef]">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
+            <span className="text-xs text-slate-400 uppercase tracking-wider">As featured in</span>
+            <span className="text-slate-400 font-serif text-xl italic">yahoo!<span className="text-xs not-italic align-top">finance</span></span>
+            <span className="text-slate-400 font-serif text-xl">Kiplinger</span>
+            <span className="text-slate-400 font-serif text-xl italic">MarketWatch</span>
+            <span className="text-slate-400 text-xs font-semibold tracking-tight leading-tight">GOOD<br/>HOUSEKEEPING</span>
           </div>
         </div>
+      </section>
 
-        <div className="flex-1 flex items-center justify-center p-4">
-          <div className="max-w-md text-center">
-            <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-6">
-              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-              You're All Set, {formData.firstName}!
-            </h2>
-            <p className="text-white/80 mb-8">
-              {formData.selectedSlot
-                ? `Your consultation is confirmed for ${formData.selectedSlot.date} at ${formData.selectedSlot.time}. A qualified fiduciary advisor will call you then.`
-                : 'Our advisors are in high demand. A qualified fiduciary advisor will call you within 24 hours.'
-              }
-            </p>
-            <div className="bg-white/10 backdrop-blur rounded-2xl p-5 mb-6">
-              <h3 className="font-semibold text-white mb-3">What happens next?</h3>
-              <ul className="text-white/70 text-sm text-left space-y-2">
-                <li className="flex items-start gap-2">
-                  <svg className="w-5 h-5 text-white/50 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                  Your advisor will call to introduce themselves
-                </li>
-                <li className="flex items-start gap-2">
-                  <svg className="w-5 h-5 text-white/50 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                  Schedule your free planning session
-                </li>
-                <li className="flex items-start gap-2">
-                  <svg className="w-5 h-5 text-white/50 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                  No obligation - just helpful guidance
-                </li>
-              </ul>
+      {/* How It Works */}
+      <section id="how-it-works" className="grid lg:grid-cols-2">
+        <div className="bg-[#f5f3ef] min-h-[500px] lg:min-h-[600px] flex items-center justify-center p-12">
+          <div className="border-4 border-[#1e3a5f] p-6 bg-white">
+            <img src="/advisor-meeting.png" alt="Couple meeting with financial advisor" className="w-full max-w-sm object-contain" />
+          </div>
+        </div>
+        <div className="bg-[#f5f3ef] px-8 lg:px-16 py-16 flex items-center relative">
+          <div className="max-w-md">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-10">How to Find a Financial Advisor</h2>
+            <div className="space-y-8">
+              <div className="flex gap-5">
+                <div className="w-10 h-10 rounded-full bg-[#1e3a5f] text-white flex items-center justify-center font-semibold shrink-0">1</div>
+                <div>
+                  <h3 className="font-bold text-slate-900 mb-2">Tell Us Your Goals</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">A few quick questions about your financial situation - retirement planning, wealth management, or other goals.</p>
+                </div>
+              </div>
+              <div className="flex gap-5">
+                <div className="w-10 h-10 rounded-full bg-[#1e3a5f] text-white flex items-center justify-center font-semibold shrink-0">2</div>
+                <div>
+                  <h3 className="font-bold text-slate-900 mb-2">Get Your Advisor Match</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">We pair you with a vetted fiduciary advisor - like a certified financial planner - who fits your needs.</p>
+                </div>
+              </div>
+              <div className="flex gap-5">
+                <div className="w-10 h-10 rounded-full bg-[#1e3a5f] text-white flex items-center justify-center font-semibold shrink-0">3</div>
+                <div>
+                  <h3 className="font-bold text-slate-900 mb-2">Free Consultation</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">Your advisor reaches out to discuss your goals. No pressure, no obligation.</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    );
-  }
+      </section>
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center sm:p-4">
+      {/* Why Us */}
+      <section id="why-us" className="py-24 px-6 bg-white relative">
+        <img src="/paper-airplane-2.png" alt="" className="absolute top-20 right-0 w-96 h-auto pointer-events-none hidden lg:block"
+          style={{ transform: 'scaleX(-1) translateX(15%)', zIndex: 1 }} />
+        <div className="max-w-5xl mx-auto relative z-10">
+          <div className="text-center mb-16">
+            <p className="text-[#1e3a5f] font-semibold mb-3 tracking-wide uppercase text-sm">Financial Planning Services</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Why AssetPlanly</h2>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">We connect you with top fiduciary advisors for retirement planning and wealth management</p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-[#faf9f7] rounded-2xl p-8 border border-slate-100">
+              <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-5">
+                <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+              </div>
+              <h3 className="font-bold text-slate-900 mb-2">Fiduciary-Only Advisors</h3>
+              <p className="text-slate-600 text-sm">Every certified financial planner in our network is legally required to put your interests first. Always.</p>
+            </div>
+            <div className="bg-[#faf9f7] rounded-2xl p-8 border border-slate-100">
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-5">
+                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              </div>
+              <h3 className="font-bold text-slate-900 mb-2">Personalized Matching</h3>
+              <p className="text-slate-600 text-sm">We match you with a wealth management expert who specializes in your specific financial goals.</p>
+            </div>
+            <div className="bg-[#faf9f7] rounded-2xl p-8 border border-slate-100">
+              <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mb-5">
+                <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              </div>
+              <h3 className="font-bold text-slate-900 mb-2">No Cost to You</h3>
+              <p className="text-slate-600 text-sm">Our service and your consultation are completely free. Get expert retirement planning advice at no charge.</p>
+            </div>
+            <div className="bg-[#faf9f7] rounded-2xl p-8 border border-slate-100">
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-5">
+                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+              </div>
+              <h3 className="font-bold text-slate-900 mb-2">Fast & Simple</h3>
+              <p className="text-slate-600 text-sm">Answer a few questions, get matched with a financial advisor, and receive your free consultation.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="py-20 px-6 bg-[#1e3a5f] text-white text-center">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Take Control of Your Financial Future?</h2>
+          <p className="text-lg text-white/80 mb-8">Get matched with a top fiduciary advisor today. It's free, fast, and could change your life.</p>
+          <button onClick={handleGetStarted} className="bg-[#e5b94e] text-slate-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#d4a93d] transition-all cursor-pointer">
+            Get matched with an advisor
+          </button>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-slate-900 text-white py-12 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <Image src="/logo-white.png" alt="AssetPlanly" width={140} height={35} className="h-8 w-auto opacity-80" />
+            <div className="flex gap-8 text-sm text-slate-400">
+              <Link href="/privacy" className="hover:text-white transition">Privacy Policy</Link>
+              <Link href="/terms" className="hover:text-white transition">Terms of Service</Link>
+            </div>
+          </div>
+          <div className="mt-8 pt-8 border-t border-slate-800 text-center text-xs text-slate-500">
+            <p>AssetPlanly connects consumers with financial advisors. We are not a financial advisor. Always consult with qualified professionals.</p>
+            <p className="mt-2">&copy; 2025 AssetPlanly. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
       {/* Blurred backdrop - the landing page shows through */}
       <div className="absolute inset-0 bg-black/40 backdrop-blur-md" onClick={onClose} />
 
