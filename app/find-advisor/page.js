@@ -458,7 +458,7 @@ function FormModal({ isOpen, onClose }) {
               <button onClick={startMatching}
                 disabled={!formData.firstName || !formData.lastName || !formData.email || !formData.phone || formData.zipCode.length !== 5 || !validateEmail(formData.email).valid}
                 className="flex-1 py-4 rounded-xl font-semibold text-white transition-all disabled:opacity-40 active:scale-[0.98] bg-[#e5b94e] text-slate-900">
-                Find My Match
+                Get matched with an advisor
               </button>
             </div>
           ) : currentStep > 1 && !(formData.whyNow === 'other' && currentStep === 1) ? (
@@ -506,11 +506,11 @@ export default function FindAdvisorPage() {
               <a href="#how-it-works" className="text-slate-600 hover:text-slate-900 font-medium transition">How It Works</a>
               <a href="#why-us" className="text-slate-600 hover:text-slate-900 font-medium transition">Why Us</a>
               <button onClick={handleGetStarted} className="bg-[#e5b94e] text-slate-900 px-6 py-3 rounded-lg font-semibold hover:bg-[#d4a93d] transition-all shadow-sm cursor-pointer">
-                Find My Match
+                Get matched with an advisor
               </button>
             </div>
             <button onClick={handleGetStarted} className="md:hidden bg-[#e5b94e] text-slate-900 px-5 py-2.5 rounded-lg font-semibold text-sm cursor-pointer">
-              Find My Match
+              Get matched with an advisor
             </button>
           </div>
         </div>
@@ -523,7 +523,7 @@ export default function FindAdvisorPage() {
             <div className="max-w-xl relative z-10">
               <h1 className="text-3xl md:text-5xl lg:text-[56px] font-bold text-slate-900 leading-[1.08] mb-4 lg:mb-6">Get Matched With a Top <span className="text-[#1e3a5f]">Financial Advisor</span> for Your Goals</h1>
               <p className="text-base lg:text-lg text-slate-600 mb-6 lg:mb-8">Get a free, no-pressure consultation packed with real, helpful advice.</p>
-              <button onClick={handleGetStarted} className="inline-block bg-[#e5b94e] text-slate-900 px-6 lg:px-8 py-3 lg:py-4 rounded-lg font-semibold text-base lg:text-lg hover:bg-[#d4a93d] transition-all cursor-pointer">Find My Match</button>
+              <button onClick={handleGetStarted} className="inline-block bg-[#e5b94e] text-slate-900 px-6 lg:px-8 py-3 lg:py-4 rounded-lg font-semibold text-base lg:text-lg hover:bg-[#d4a93d] transition-all cursor-pointer">Get matched with an advisor</button>
             </div>
             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[55%] hidden lg:flex items-center justify-end pointer-events-none">
               <img src="/couple-line-drawing.png" alt="Couple reviewing financial plans" className="w-full max-w-lg opacity-90"
@@ -1016,11 +1016,11 @@ export default function FindAdvisorPage() {
               <a href="#how-it-works" className="text-slate-600 hover:text-slate-900 font-medium transition">How It Works</a>
               <a href="#why-us" className="text-slate-600 hover:text-slate-900 font-medium transition">Why Us</a>
               <button onClick={handleGetStarted} className="bg-[#e5b94e] text-slate-900 px-6 py-3 rounded-lg font-semibold hover:bg-[#d4a93d] transition-all shadow-sm cursor-pointer">
-                Find My Match
+                Get matched with an advisor
               </button>
             </div>
             <button onClick={handleGetStarted} className="md:hidden bg-[#e5b94e] text-slate-900 px-5 py-2.5 rounded-lg font-semibold text-sm cursor-pointer">
-              Find My Match
+              Get matched with an advisor
             </button>
           </div>
         </div>
@@ -1038,7 +1038,7 @@ export default function FindAdvisorPage() {
                 Get a free, no-pressure consultation packed with real, helpful advice.
               </p>
               <button onClick={handleGetStarted} className="inline-block bg-[#e5b94e] text-slate-900 px-6 lg:px-8 py-3 lg:py-4 rounded-lg font-semibold text-base lg:text-lg hover:bg-[#d4a93d] transition-all cursor-pointer">
-                Find My Match
+                Get matched with an advisor
               </button>
             </div>
             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[55%] hidden lg:flex items-center justify-end pointer-events-none">
