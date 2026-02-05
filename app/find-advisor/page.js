@@ -19,7 +19,8 @@ const validateEmail = (email) => {
 function FormModal({ isOpen, onClose }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [matchedAdvisor, setMatchedAdvisor] = useState(null);
+  const [matchingPhase, setMatchingPhase] = useState(0); // 0=not started, 1-4=cycling advisors, 5=matched
   const [error, setError] = useState('');
 
   // Lock body scroll when modal is open
@@ -49,65 +50,32 @@ function FormModal({ isOpen, onClose }) {
     firstName: '', lastName: '', email: '', phone: '',
     whyNow: '', whyNowOther: '', whatYouWant: '', hasAdvisor: '', whyChanging: '',
     financialComplexity: '', investableAssets: '', zipCode: '',
-    selectedSlot: null, // { date: 'Today'/'Tomorrow', time: '10:00 AM', datetime: Date }
   });
 
-  const [availableSlots, setAvailableSlots] = useState({ today: [], tomorrow: [], upcoming: [] });
-  const [loadingSlots, setLoadingSlots] = useState(false);
+  // Sample advisors for matching animation
+  const sampleAdvisors = [
+    { name: 'Michael Chen, CFP®', firm: 'Wealth Partners Group', specialty: 'Retirement Planning' },
+    { name: 'Sarah Williams, CFA', firm: 'Legacy Financial', specialty: 'Tax Optimization' },
+    { name: 'David Thompson, CFP®', firm: 'Pinnacle Advisors', specialty: 'Estate Planning' },
+    { name: 'Jennifer Martinez, ChFC', firm: 'Summit Wealth', specialty: 'Investment Management' },
+  ];
 
-  // Fetch real availability from API
-  const fetchAvailability = async () => {
-    try {
-      const response = await fetch('/api/availability?days=7');
-      const data = await response.json();
-
-      if (data.success && data.availableSlots) {
-        const slots = { today: [], tomorrow: [], upcoming: [] };
-
-        data.availableSlots.forEach(day => {
-          const daySlots = day.slots.map(slot => ({
-            time: slot.display,
-            date: day.isToday ? 'Today' : day.isTomorrow ? 'Tomorrow' : day.displayDate,
-            datetime: slot.datetime,
-            dayName: day.dayName
-          }));
-
-          if (day.isToday) {
-            slots.today = daySlots;
-          } else if (day.isTomorrow) {
-            slots.tomorrow = daySlots;
-          } else {
-            slots.upcoming.push(...daySlots);
-          }
-        });
-
-        return slots;
-      }
-      return { today: [], tomorrow: [], upcoming: [] };
-    } catch (error) {
-      console.error('Error fetching availability:', error);
-      return { today: [], tomorrow: [], upcoming: [] };
-    }
+  // The matched advisor (would come from API in production)
+  const finalAdvisor = {
+    name: 'Robert Anderson, CFP®',
+    firm: 'Cornerstone Financial Planning',
+    specialty: 'Retirement & Wealth Management',
+    photo: '/advisor-photo.jpg',
+    bookingUrl: 'https://calendly.com/cornerstone-advisor',
+    bio: 'With 15+ years helping clients achieve financial independence, Robert specializes in comprehensive retirement planning and tax-efficient wealth strategies.',
   };
-
-  // Load slots when reaching calendar step
-  useEffect(() => {
-    if (currentStep === 10) {
-      setLoadingSlots(true);
-      fetchAvailability().then(slots => {
-        setAvailableSlots(slots);
-        setLoadingSlots(false);
-      });
-    }
-  }, [currentStep]);
-
-  const brandColor = '#1e3a5f';
 
   const goToNext = () => setTimeout(() => setCurrentStep(prev => prev + 1), 200);
 
   const handleSelect = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (field === 'hasAdvisor' && value === 'no-first-time') {
+      // Skip "why changing" question
       setTimeout(() => setCurrentStep(prev => prev + 2), 200);
     } else {
       setTimeout(() => setCurrentStep(prev => prev + 1), 200);
@@ -118,7 +86,8 @@ function FormModal({ isOpen, onClose }) {
 
   const handleBack = () => {
     let prevStep = currentStep - 1;
-    if (currentStep === 7 && formData.hasAdvisor === 'no-first-time') prevStep = 5;
+    // Skip back over "why changing" if user has no advisor
+    if (currentStep === 5 && formData.hasAdvisor === 'no-first-time') prevStep = 3;
     setTimeout(() => setCurrentStep(prevStep), 50);
   };
 
@@ -134,11 +103,12 @@ function FormModal({ isOpen, onClose }) {
     return `(${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 10)}`;
   };
 
-  const handleSubmit = async (e) => {
-    if (e) e.preventDefault();
-    setIsSubmitting(true);
-    setError('');
+  // Start matching animation and submit
+  const startMatching = async () => {
+    setCurrentStep(8); // Go to matching screen
+    setMatchingPhase(1);
 
+    // Submit form data
     try {
       const response = await fetch('/api/book', {
         method: 'POST',
@@ -155,17 +125,9 @@ function FormModal({ isOpen, onClose }) {
           whyChanging: formData.whyChanging,
           financialComplexity: formData.financialComplexity,
           investableAssets: formData.investableAssets,
-          scheduledAt: formData.selectedSlot?.datetime || null,
-          selectedSlot: formData.selectedSlot ? {
-            date: formData.selectedSlot.date,
-            time: formData.selectedSlot.time,
-          } : null,
           source: 'consumer-find-advisor'
         }),
       });
-
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Failed to submit');
 
       if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
         window.gtag('event', 'conversion', {
@@ -173,31 +135,402 @@ function FormModal({ isOpen, onClose }) {
           'value': 1.0, 'currency': 'USD'
         });
       }
-
-      setIsSubmitted(true);
     } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsSubmitting(false);
+      console.error('Submit error:', err);
     }
+
+    // Cycle through advisors for animation
+    setTimeout(() => setMatchingPhase(2), 800);
+    setTimeout(() => setMatchingPhase(3), 1600);
+    setTimeout(() => setMatchingPhase(4), 2400);
+    setTimeout(() => {
+      setMatchedAdvisor(finalAdvisor);
+      setMatchingPhase(5);
+      setCurrentStep(9);
+    }, 3500);
   };
 
   // Auto-skip whyChanging if user selected no-first-time
   useEffect(() => {
-    if (currentStep === 6 && formData.hasAdvisor === 'no-first-time') {
-      setCurrentStep(7);
+    if (currentStep === 4 && formData.hasAdvisor === 'no-first-time') {
+      setCurrentStep(5);
     }
   }, [currentStep, formData.hasAdvisor]);
 
   if (!isOpen) return null;
 
-  const totalSteps = 10; // Added calendar booking step
+  const totalSteps = 7; // Value questions (1-6) + contact info (7)
+  const brandColor = '#1e3a5f';
 
-  // Success screen
-  if (isSubmitted) {
+  // Matching animation screen (step 8)
+  if (currentStep === 8) {
+    const currentAdvisor = sampleAdvisors[matchingPhase - 1] || sampleAdvisors[0];
     return (
       <div className="fixed inset-0 z-50 flex flex-col bg-[#1e3a5f]">
-        {/* Persistent header on success too */}
+        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+          <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin mb-8" />
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">Finding Your Perfect Match...</h2>
+          <div className="bg-white/10 backdrop-blur rounded-2xl p-6 mb-4 min-w-[280px] animate-pulse">
+            <div className="w-16 h-16 bg-white/20 rounded-full mx-auto mb-3" />
+            <p className="text-white font-semibold text-lg">{currentAdvisor.name}</p>
+            <p className="text-white/70 text-sm">{currentAdvisor.firm}</p>
+            <p className="text-white/50 text-xs mt-1">{currentAdvisor.specialty}</p>
+          </div>
+          <p className="text-white/60 text-sm">Analyzing your needs and preferences...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Advisor result screen (step 9)
+  if (currentStep === 9 && matchedAdvisor) {
+    return (
+      <div className="fixed inset-0 z-50 flex flex-col bg-[#1e3a5f]">
+        <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-8">
+          <div className="w-20 h-20 rounded-full bg-green-500 flex items-center justify-center mx-auto mb-6 animate-bounce">
+            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 text-center">
+            Great News, {formData.firstName}!
+          </h2>
+          <p className="text-white/80 mb-8 text-center">We found the perfect advisor for you.</p>
+
+          <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full text-center shadow-2xl">
+            <div className="w-24 h-24 bg-gradient-to-br from-[#1e3a5f] to-[#2d5a8f] rounded-full mx-auto mb-4 flex items-center justify-center">
+              <span className="text-3xl font-bold text-white">{matchedAdvisor.name.split(' ').map(n => n[0]).join('').slice(0, 2)}</span>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-1">{matchedAdvisor.name}</h3>
+            <p className="text-[#1e3a5f] font-medium mb-2">{matchedAdvisor.firm}</p>
+            <p className="text-gray-500 text-sm mb-4">{matchedAdvisor.specialty}</p>
+            <p className="text-gray-600 text-sm mb-6 leading-relaxed">{matchedAdvisor.bio}</p>
+
+            <a
+              href={matchedAdvisor.bookingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full py-4 bg-[#e5b94e] text-slate-900 font-bold text-lg rounded-xl hover:bg-[#d4a93d] transition-all"
+            >
+              Book Your Free Call
+            </a>
+            <p className="text-gray-400 text-xs mt-3">You'll be taken to {matchedAdvisor.name.split(',')[0]}'s calendar</p>
+          </div>
+
+          <p className="text-white/60 text-sm mt-6 text-center">
+            We've also sent {matchedAdvisor.name.split(',')[0]}'s info to {formData.email}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Main form
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center sm:p-4">
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-md" onClick={onClose} />
+      <div className="relative bg-white sm:rounded-3xl shadow-2xl w-full sm:max-w-lg h-full sm:h-auto sm:max-h-[85vh] flex flex-col overflow-hidden animate-slideUp">
+        <button onClick={onClose} className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition">
+          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div className="flex-shrink-0 px-5 pt-4 pb-3 border-b border-gray-100">
+          <div className="flex items-center justify-center mb-4">
+            <Image src="/logo.png" alt="AssetPlanly" width={130} height={32} className="h-7 w-auto" />
+          </div>
+          <div className="text-center">
+            <h1 className="text-lg sm:text-xl font-bold text-[#1e3a5f] mb-1">Find Your Perfect Advisor Match</h1>
+            <p className="text-sm text-gray-500">Free, no-pressure consultation packed with real advice</p>
+          </div>
+        </div>
+
+        <div className="flex-shrink-0 h-1 bg-gray-100">
+          <div className="h-1 transition-all duration-500 ease-out" style={{ width: `${(currentStep / totalSteps) * 100}%`, backgroundColor: brandColor }} />
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-5 py-6 sm:px-6 sm:py-8">
+
+          {/* Step 1: What brought you here? */}
+          {currentStep === 1 && (
+            <div className="animate-slideLeft">
+              <div className="text-center mb-5">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">What brought you here today?</h2>
+              </div>
+              <div className="grid gap-2.5">
+                {[
+                  { value: 'closer-to-retirement', label: 'Getting closer to retirement' },
+                  { value: 'recently-retired', label: 'Recently retired' },
+                  { value: 'rollover', label: 'Rolling over a 401k or pension' },
+                  { value: 'windfall', label: 'Came into money' },
+                  { value: 'market-concerns', label: 'Concerned about the market' },
+                  { value: 'need-plan', label: 'Want a clearer plan' },
+                  { value: 'other', label: 'Other' },
+                ].map((opt) => (
+                  <button key={opt.value}
+                    onClick={() => opt.value === 'other' ? setFormData(prev => ({ ...prev, whyNow: 'other' })) : handleSelect('whyNow', opt.value)}
+                    className={`p-4 rounded-xl border-2 transition-all text-left font-medium active:scale-[0.98] ${formData.whyNow === opt.value ? 'border-[#1e3a5f] bg-[#1e3a5f]/10' : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'}`}>
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+              {formData.whyNow === 'other' && (
+                <div className="mt-3">
+                  <input type="text" value={formData.whyNowOther} onChange={(e) => setFormData(prev => ({ ...prev, whyNowOther: e.target.value }))}
+                    placeholder="Please specify..." className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none" autoFocus />
+                  <button onClick={() => handleSelect('whyNow', 'other')} disabled={!formData.whyNowOther}
+                    className="w-full mt-3 py-3 rounded-xl font-semibold text-white transition disabled:opacity-50 bg-[#1e3a5f]">Continue</button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Step 2: What's most important? */}
+          {currentStep === 2 && (
+            <div className="animate-slideLeft">
+              <div className="text-center mb-5">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">What's most important to you?</h2>
+              </div>
+              <div className="grid grid-cols-2 gap-2.5">
+                {[
+                  { value: 'retirement-confidence', label: 'Retirement confidence' },
+                  { value: 'grow-wealth', label: 'Grow wealth' },
+                  { value: 'protect-wealth', label: 'Protect wealth' },
+                  { value: 'reduce-taxes', label: 'Reduce taxes' },
+                  { value: 'family-legacy', label: 'Family & legacy' },
+                  { value: 'everything', label: 'All of the above' },
+                ].map((opt) => (
+                  <button key={opt.value} onClick={() => handleSelect('whatYouWant', opt.value)}
+                    className={`p-4 rounded-xl border-2 transition-all text-left font-medium active:scale-[0.98] ${formData.whatYouWant === opt.value ? 'border-[#1e3a5f] bg-[#1e3a5f]/10' : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'}`}>
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: Do you have an advisor? */}
+          {currentStep === 3 && (
+            <div className="animate-slideLeft">
+              <div className="text-center mb-5">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Do you have a financial advisor?</h2>
+              </div>
+              <div className="grid gap-2.5">
+                {[
+                  { value: 'no-first-time', label: 'No, this would be my first' },
+                  { value: 'yes-considering-change', label: 'Yes, but considering a change' },
+                  { value: 'yes-second-opinion', label: 'Yes, want a second opinion' },
+                ].map((opt) => (
+                  <button key={opt.value} onClick={() => handleSelect('hasAdvisor', opt.value)}
+                    className={`p-4 rounded-xl border-2 transition-all text-left font-medium active:scale-[0.98] ${formData.hasAdvisor === opt.value ? 'border-[#1e3a5f] bg-[#1e3a5f]/10' : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'}`}>
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Step 4: Why changing? (skipped if no advisor) */}
+          {currentStep === 4 && (
+            <div className="animate-slideLeft">
+              <div className="text-center mb-5">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">What's making you consider a change?</h2>
+                <p className="text-gray-500 text-sm">Optional</p>
+              </div>
+              <textarea value={formData.whyChanging} onChange={(e) => setFormData(prev => ({ ...prev, whyChanging: e.target.value }))}
+                placeholder="Share your thoughts..." rows={3}
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none resize-none" />
+            </div>
+          )}
+
+          {/* Step 5: Financial complexity */}
+          {currentStep === 5 && (
+            <div className="animate-slideLeft">
+              <div className="text-center mb-5">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">How complex is your financial situation?</h2>
+              </div>
+              <div className="grid gap-2.5">
+                {[
+                  { value: 'simple', label: 'Pretty straightforward' },
+                  { value: 'moderate', label: 'Somewhat complex' },
+                  { value: 'complex', label: 'Quite complex' },
+                ].map((opt) => (
+                  <button key={opt.value} onClick={() => handleSelect('financialComplexity', opt.value)}
+                    className={`p-4 rounded-xl border-2 transition-all text-left font-medium active:scale-[0.98] ${formData.financialComplexity === opt.value ? 'border-[#1e3a5f] bg-[#1e3a5f]/10' : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'}`}>
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Step 6: Investable assets */}
+          {currentStep === 6 && (
+            <div className="animate-slideLeft">
+              <div className="text-center mb-5">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">What are your total savings and investments?</h2>
+                <p className="text-gray-500 text-sm">401(k), IRA, brokerage, savings. Not including your home.</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2.5">
+                {[
+                  { value: 'under-50k', label: 'Under $50k' },
+                  { value: '50k-150k', label: '$50k - $150k' },
+                  { value: '150k-500k', label: '$150k - $500k' },
+                  { value: '500k-1m', label: '$500k - $1M' },
+                  { value: '1m-5m', label: '$1M - $5M' },
+                  { value: '5m+', label: '$5M+' },
+                ].map((opt) => (
+                  <button key={opt.value} onClick={() => handleSelect('investableAssets', opt.value)}
+                    className={`p-4 rounded-xl border-2 transition-all text-left font-medium active:scale-[0.98] ${formData.investableAssets === opt.value ? 'border-[#1e3a5f] bg-[#1e3a5f]/10' : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'}`}>
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Step 7: Contact Info */}
+          {currentStep === 7 && (
+            <div className="animate-slideLeft">
+              <div className="text-center mb-5">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Almost there! Let's get your info</h2>
+                <p className="text-gray-500 text-sm">Only shared with your matched advisor</p>
+              </div>
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                    <input type="text" name="firstName" value={formData.firstName} onChange={handleChange}
+                      className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none" autoFocus />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                    <input type="text" name="lastName" value={formData.lastName} onChange={handleChange}
+                      className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input type="email" name="email" value={formData.email} onChange={handleChange}
+                    placeholder="Where we'll send your advisor match"
+                    className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                  <input type="tel" name="phone" value={formData.phone} placeholder="(555) 123-4567"
+                    onChange={(e) => setFormData(prev => ({ ...prev, phone: formatPhone(e.target.value) }))}
+                    className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">ZIP Code</label>
+                  <input type="text" inputMode="numeric" value={formData.zipCode} maxLength={5}
+                    onChange={(e) => setFormData(prev => ({ ...prev, zipCode: e.target.value.replace(/\D/g, '').slice(0, 5) }))}
+                    placeholder="To find advisors near you"
+                    className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none" />
+                </div>
+              </div>
+              <div className="mt-4 p-3 bg-blue-50 rounded-xl">
+                <p className="text-xs text-blue-700 text-center">
+                  <span className="font-semibold">Your privacy matters.</span> Your info is only shared with your matched advisor and used to send your match results.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {error && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">{error}</div>
+          )}
+        </div>
+
+        {/* Bottom buttons */}
+        <div className="flex-shrink-0 px-5 py-4 sm:px-6 sm:py-5 border-t border-gray-100 bg-white">
+          {currentStep === 4 ? (
+            <div className="flex gap-3">
+              <button onClick={handleBack} className="px-6 py-4 rounded-xl font-semibold text-gray-600 bg-gray-100 transition-all active:scale-[0.98]">Back</button>
+              <button onClick={handleSkip} className="flex-1 py-4 rounded-xl font-semibold text-gray-600 bg-gray-100 transition-all active:scale-[0.98]">Skip</button>
+              <button onClick={goToNext} disabled={!formData.whyChanging}
+                className="flex-1 py-4 rounded-xl font-semibold text-white transition-all disabled:opacity-40 active:scale-[0.98] bg-[#1e3a5f]">Continue</button>
+            </div>
+          ) : currentStep === 7 ? (
+            <div className="flex gap-3">
+              <button onClick={handleBack} className="px-6 py-4 rounded-xl font-semibold text-gray-600 bg-gray-100 transition-all active:scale-[0.98]">Back</button>
+              <button onClick={startMatching}
+                disabled={!formData.firstName || !formData.lastName || !formData.email || !formData.phone || formData.zipCode.length !== 5 || !validateEmail(formData.email).valid}
+                className="flex-1 py-4 rounded-xl font-semibold text-white transition-all disabled:opacity-40 active:scale-[0.98] bg-[#e5b94e] text-slate-900">
+                Find My Match
+              </button>
+            </div>
+          ) : currentStep > 1 && !(formData.whyNow === 'other' && currentStep === 1) ? (
+            <button onClick={handleBack} className="w-full py-4 rounded-xl font-semibold text-gray-600 bg-gray-100 transition-all active:scale-[0.98]">Back</button>
+          ) : null}
+
+          {currentStep === 1 && (
+            <p className="text-xs text-gray-400 text-center mt-3">
+              By continuing, you agree to our <Link href="/terms" className="underline">Terms</Link> and <Link href="/privacy" className="underline">Privacy Policy</Link>
+            </p>
+          )}
+        </div>
+
+        <style jsx>{`
+          @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+          @keyframes slideLeft { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+          .animate-slideUp { animation: slideUp 0.3s ease-out; }
+          .animate-slideLeft { animation: slideLeft 0.25s ease-out; }
+        `}</style>
+      </div>
+    </div>
+  );
+}
+
+// Main Page Component
+export default function FindAdvisorPage() {
+  const [showForm, setShowForm] = useState(false);
+
+  const handleGetStarted = (e) => {
+    e.preventDefault();
+    setShowForm(true);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#faf9f7]">
+      <FormModal isOpen={showForm} onClose={() => setShowForm(false)} />
+
+      <nav className="bg-white border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex justify-between items-center h-20">
+            <Link href="/find-advisor">
+              <Image src="/logo.png" alt="AssetPlanly" width={160} height={40} className="h-10 w-auto" />
+            </Link>
+            <div className="hidden md:flex items-center gap-10">
+              <a href="#how-it-works" className="text-slate-600 hover:text-slate-900 font-medium transition">How It Works</a>
+              <a href="#why-us" className="text-slate-600 hover:text-slate-900 font-medium transition">Why Us</a>
+              <button onClick={handleGetStarted} className="bg-[#e5b94e] text-slate-900 px-6 py-3 rounded-lg font-semibold hover:bg-[#d4a93d] transition-all shadow-sm cursor-pointer">
+                Find My Match
+              </button>
+            </div>
+            <button onClick={handleGetStarted} className="md:hidden bg-[#e5b94e] text-slate-900 px-5 py-2.5 rounded-lg font-semibold text-sm cursor-pointer">
+              Find My Match
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <section className="relative bg-white overflow-hidden pb-4 lg:pb-16">
+        <div className="max-w-7xl mx-auto px-6 lg:px-16">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:min-h-[550px] py-8 lg:py-12">
+            <div className="max-w-xl relative z-10">
+              <h1 className="text-3xl md:text-5xl lg:text-[56px] font-bold text-slate-900 leading-[1.08] mb-4 lg:mb-6">Get Matched With a Top <span className="text-[#1e3a5f]">Financial Advisor</span> for Your Goals</h1>
+              <p className="text-base lg:text-lg text-slate-600 mb-6 lg:mb-8">Get a free, no-pressure consultation packed with real, helpful advice.</p>
+              <button onClick={handleGetStarted} className="inline-block bg-[#e5b94e] text-slate-900 px-6 lg:px-8 py-3 lg:py-4 rounded-lg font-semibold text-base lg:text-lg hover:bg-[#d4a93d] transition-all cursor-pointer">Find My Match</button>
+            </div>
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[55%] hidden lg:flex items-center justify-end pointer-events-none">
+              <img src="/couple-line-drawing.png" alt="Couple reviewing financial plans" className="w-full max-w-lg opacity-90"
+                style={{ maskImage: 'linear-gradient(to left, black 60%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to left, black 60%, transparent 100%)' }} />
+            </div>
+          </div>
+        </div>
         <div className="flex-shrink-0 px-5 pt-4 pb-3 bg-white">
           <div className="flex items-center justify-center mb-4">
             <Image src="/logo.png" alt="AssetPlanly" width={130} height={32} className="h-7 w-auto" />
