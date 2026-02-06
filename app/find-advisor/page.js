@@ -47,7 +47,7 @@ function FormModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
     firstName: '', lastName: '', email: '', phone: '',
     whyNow: '', whyNowOther: '', whatYouWant: '', hasAdvisor: '', whyChanging: '',
-    financialComplexity: '', investableAssets: '', zipCode: '',
+    investableAssets: '', zipCode: '',
   });
 
   // Sample advisors for matching animation
@@ -103,7 +103,7 @@ function FormModal({ isOpen, onClose }) {
 
   // Start matching animation and submit
   const startMatching = async () => {
-    setCurrentStep(8); // Go to matching screen
+    setCurrentStep(7); // Go to matching screen
     setMatchingPhase(1);
 
     // Submit form data
@@ -121,7 +121,6 @@ function FormModal({ isOpen, onClose }) {
           whatYouWant: formData.whatYouWant,
           hasAdvisor: formData.hasAdvisor,
           whyChanging: formData.whyChanging,
-          financialComplexity: formData.financialComplexity,
           investableAssets: formData.investableAssets,
           source: 'consumer-find-advisor'
         }),
@@ -144,7 +143,7 @@ function FormModal({ isOpen, onClose }) {
     setTimeout(() => {
       setMatchedAdvisor(finalAdvisor);
       setMatchingPhase(5);
-      setCurrentStep(9);
+      setCurrentStep(8);
     }, 3500);
   };
 
@@ -157,11 +156,11 @@ function FormModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  const totalSteps = 7; // Value questions (1-6) + contact info (7)
+  const totalSteps = 6; // Value questions (1-5) + contact info (6)
   const brandColor = '#1e3a5f';
 
-  // Matching animation screen (step 8)
-  if (currentStep === 8) {
+  // Matching animation screen (step 7)
+  if (currentStep === 7) {
     const currentAdvisor = sampleAdvisors[matchingPhase - 1] || sampleAdvisors[0];
     return (
       <div className="fixed inset-0 z-50 flex flex-col bg-[#1e3a5f]">
@@ -180,8 +179,8 @@ function FormModal({ isOpen, onClose }) {
     );
   }
 
-  // Advisor result screen (step 9)
-  if (currentStep === 9 && matchedAdvisor) {
+  // Advisor result screen (step 8)
+  if (currentStep === 8 && matchedAdvisor) {
     return (
       <div className="fixed inset-0 z-50 flex flex-col bg-[#1e3a5f]">
         <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-8">
@@ -342,29 +341,8 @@ function FormModal({ isOpen, onClose }) {
             </div>
           )}
 
-          {/* Step 5: Financial complexity */}
+          {/* Step 5: Investable assets */}
           {currentStep === 5 && (
-            <div className="animate-slideLeft">
-              <div className="text-center mb-5">
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">How complex is your financial situation?</h2>
-              </div>
-              <div className="grid gap-2.5">
-                {[
-                  { value: 'simple', label: 'Pretty straightforward' },
-                  { value: 'moderate', label: 'Somewhat complex' },
-                  { value: 'complex', label: 'Quite complex' },
-                ].map((opt) => (
-                  <button key={opt.value} onClick={() => handleSelect('financialComplexity', opt.value)}
-                    className={`p-4 rounded-xl border-2 transition-all text-left font-medium active:scale-[0.98] ${formData.financialComplexity === opt.value ? 'border-[#1e3a5f] bg-[#1e3a5f]/10' : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'}`}>
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Step 6: Investable assets */}
-          {currentStep === 6 && (
             <div className="animate-slideLeft">
               <div className="text-center mb-5">
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">What are your total savings and investments?</h2>
@@ -388,8 +366,8 @@ function FormModal({ isOpen, onClose }) {
             </div>
           )}
 
-          {/* Step 7: Contact Info */}
-          {currentStep === 7 && (
+          {/* Step 6: Contact Info */}
+          {currentStep === 6 && (
             <div className="animate-slideLeft">
               <div className="text-center mb-5">
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Almost there! Let's get your info</h2>
@@ -447,7 +425,7 @@ function FormModal({ isOpen, onClose }) {
               <button onClick={goToNext} disabled={!formData.whyChanging}
                 className="flex-1 py-4 rounded-xl font-semibold text-white transition-all disabled:opacity-40 active:scale-[0.98] bg-[#1e3a5f]">Continue</button>
             </div>
-          ) : currentStep === 7 ? (
+          ) : currentStep === 6 ? (
             <div className="flex gap-3">
               <button onClick={handleBack} className="px-6 py-4 rounded-xl font-semibold text-gray-600 bg-gray-100 transition-all active:scale-[0.98]">Back</button>
               <button onClick={startMatching}
@@ -640,7 +618,7 @@ export default function FindAdvisorPage() {
       <footer className="bg-slate-900 text-white py-12 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <Image src="/logo-white.png" alt="AssetPlanly" width={140} height={35} className="h-8 w-auto opacity-80" />
+            <span className="text-xl font-bold text-white">AssetPlanly</span>
             <div className="flex gap-8 text-sm text-slate-400">
               <Link href="/privacy" className="hover:text-white transition">Privacy Policy</Link>
               <Link href="/terms" className="hover:text-white transition">Terms of Service</Link>
@@ -648,7 +626,7 @@ export default function FindAdvisorPage() {
           </div>
           <div className="mt-8 pt-8 border-t border-slate-800 text-center text-xs text-slate-500">
             <p>AssetPlanly connects consumers with financial advisors. We are not a financial advisor. Always consult with qualified professionals.</p>
-            <p className="mt-2">&copy; 2025 AssetPlanly. All rights reserved.</p>
+            <p className="mt-2">&copy; 2026 AssetPlanly. All rights reserved.</p>
           </div>
         </div>
       </footer>
